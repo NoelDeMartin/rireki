@@ -1,0 +1,3 @@
+# Rireki
+
+Backups CLI tool.
