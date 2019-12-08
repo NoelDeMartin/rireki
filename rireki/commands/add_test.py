@@ -1,7 +1,8 @@
 import os
 
-from tests.base import TestCase
-from tests.utils.cli import Cli
+from rireki.testing.cli import Cli
+from rireki.testing.test_case import TestCase
+
 
 class TestAdd(TestCase):
 

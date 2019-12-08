@@ -1,0 +1,17 @@
+import click
+
+from rireki.commands.add import add
+from rireki.commands.status import status
+from rireki.lib.config import Config
+
+
+@click.group()
+def cli():
+    Config.load()
+
+
+cli.add_command(add)
+cli.add_command(status)
+
+if __name__ == '__main__':
+    cli()

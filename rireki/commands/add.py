@@ -1,9 +1,9 @@
 import click
 
 from rireki.lib.projects_manager import project_exists, install_project
-from rireki.main import cli
 
-@cli.command()
+
+@click.command()
 @click.argument('name')
 def add(name):
     """Install a new project"""
@@ -13,6 +13,7 @@ def add(name):
         return
 
     add_new_project(name)
+
 
 def add_new_project(name):
     click.echo('Installing "%s" project...' % name)

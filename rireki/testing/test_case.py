@@ -3,7 +3,8 @@ import shutil
 import unittest
 
 from faker import Faker
-from tests.utils.cli import Cli
+from rireki.testing.cli import Cli
+
 
 class TestCase(unittest.TestCase):
     home_path = '/tmp/rireki_testing'

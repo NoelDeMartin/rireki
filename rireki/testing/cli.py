@@ -1,6 +1,7 @@
 from click.testing import CliRunner
 
-from rireki.main import cli
+from rireki.cli import cli
+
 
 class Cli():
     runner = CliRunner()

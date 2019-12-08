@@ -1,5 +1,6 @@
 import os
 
+
 class Config():
     home_path = None
     projects_path = None
