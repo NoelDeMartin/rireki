@@ -18,7 +18,7 @@ def format_table_row(row, column_width):
 
 
 def format_table_cell(content, column_width):
-    if type(content) is str:
+    if type(content) in [str, unicode]:
         return pad_text(content, column_width)
 
     text = pad_text(content['text'], column_width)

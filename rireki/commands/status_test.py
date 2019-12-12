@@ -18,12 +18,7 @@ class TestStatus(TestCase):
 
     def test_with_projects_installed(self):
         # Prepare
-        project_name = self.fake.name()
-
-        if not os.path.exists('%s/projects' % self.home_path):
-            os.makedirs('%s/projects' % self.home_path)
-
-        open('%s/projects/%s.conf' % (self.home_path, project_name), 'w').close()
+        project = self.create_project(driver='zip')
 
         # Execute
         result = Cli.run('status')
@@ -33,5 +28,6 @@ class TestStatus(TestCase):
 
         output_lines = result.output.splitlines()
         assert len(output_lines) == 2
-        assert project_name in output_lines[1]
+        assert project.name in output_lines[1]
+        assert 'zip' in output_lines[1]
         assert 'backup-pending' in output_lines[1]

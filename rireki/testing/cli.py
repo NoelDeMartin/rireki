@@ -17,5 +17,15 @@ class Cli():
         cls.env[name] = value
 
     @classmethod
-    def run(cls, *args):
-        return cls.runner.invoke(cli, args, env=cls.env)
+    def run(cls, *args, **kwargs):
+        if 'input' in kwargs:
+            input_argument = kwargs['input']
+
+            if type(kwargs['input']) in (tuple, list):
+                input = '\n'.join(input_argument)
+            else:
+                input = input_argument
+        else:
+            input = ''
+
+        return cls.runner.invoke(cli, args, env=cls.env, input=input)

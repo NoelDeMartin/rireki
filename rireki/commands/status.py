@@ -18,12 +18,13 @@ def print_projects_status(projects):
         click.echo('No projects installed!')
         return
 
-    display_table(('Name', 'Status'), map(get_project_info, projects))
+    display_table(('Name', 'Driver', 'Status'), map(get_project_info, projects))
 
 
 def get_project_info(project):
     return (
         project.name,
+        project.driver.name,
         {
             'text': 'backup-pending',
             'color': 'red',
