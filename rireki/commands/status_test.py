@@ -16,7 +16,7 @@ class TestStatus(TestCase):
 
         assert not os.path.exists(self.home_path)
 
-    def test_with_projects_installed(self):
+    def test_with_one_project_installed(self):
         # Prepare
         project = self.create_project(driver='zip')
 

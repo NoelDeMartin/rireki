@@ -1,7 +1,7 @@
 import click
 
-from rireki.lib.projects_manager import get_projects
-from rireki.lib.output import display_table
+from rireki.core.projects_manager import get_projects
+from rireki.utils.output import display_table
 
 
 @click.command()

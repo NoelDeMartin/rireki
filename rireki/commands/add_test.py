@@ -7,21 +7,32 @@ from rireki.testing.test_case import TestCase
 
 class TestAdd(TestCase):
 
+    def test_existing_project(self):
+        # Prepare
+        project = self.create_project()
+
+        # Execute
+        result = Cli.run('add', project.name)
+
+        # Assert
+        assert result.exit_code == 0
+        assert ('Project with name "%s" already installed!' % project.name) in result.output
+
     def test_new_project(self):
         # Prepare
-        project_name = self.fake.name()
+        project_name = self.faker.name()
 
         # Execute
         result = Cli.run(
             'add', project_name,
             '--driver=custom',
-            input=('daily', '-'),
+            '--storage=local',
+            input=('daily', '-', '/tmp'),
         )
 
         # Assert
         assert result.exit_code == 0
-        assert ('Installing "%s" project...' % project_name) in result.output
-        assert 'Done' in result.output
+        assert ('Project "%s" has been installed!' % project_name) in result.output
 
         assert os.path.exists('%s/projects/%s.conf' % (self.home_path, project_name))
 
@@ -32,7 +43,7 @@ class TestAdd(TestCase):
 
     def test_new_project_with_zip_driver(self):
         # Prepare
-        project_name = self.fake.name()
+        project_name = self.faker.name()
         driver_name = 'zip'
         driver_frequency_name = 'daily'
         driver_frequency_minutes = 1440
@@ -42,7 +53,8 @@ class TestAdd(TestCase):
         result = Cli.run(
             'add', project_name,
             '--driver=' + driver_name,
-            input=(driver_frequency_name, driver_path),
+            '--storage=local',
+            input=(driver_frequency_name, driver_path, '/tmp'),
         )
 
         # Assert
@@ -57,17 +69,18 @@ class TestAdd(TestCase):
 
     def test_new_project_with_custom_driver(self):
         # Prepare
-        project_name = self.fake.name()
+        project_name = self.faker.name()
         driver_name = 'custom'
         driver_frequency_name = 'custom'
         driver_frequency_minutes = 42
-        driver_command = self.fake.word()
+        driver_command = self.faker.word()
 
         # Execute
         result = Cli.run(
             'add', project_name,
             '--driver=' + driver_name,
-            input=(driver_frequency_name, str(driver_frequency_minutes), driver_command),
+            '--storage=local',
+            input=(driver_frequency_name, str(driver_frequency_minutes), driver_command, '/tmp'),
         )
 
         # Assert
@@ -80,13 +93,25 @@ class TestAdd(TestCase):
         assert config['driver']['frequency'] == driver_frequency_minutes
         assert config['driver']['command'] == driver_command
 
-    def test_existing_project(self):
+    def test_new_project_with_local_storage(self):
         # Prepare
-        project = self.create_project()
+        project_name = self.faker.name()
+        storage_name = 'local'
+        storage_path = '/tmp'
 
         # Execute
-        result = Cli.run('add', project.name)
+        result = Cli.run(
+            'add', project_name,
+            '--driver=custom',
+            '--storage=' + storage_name,
+            input=('daily', '-', storage_path),
+        )
 
         # Assert
         assert result.exit_code == 0
-        assert ('Project with name "%s" already installed!' % project.name) in result.output
+
+        config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
+
+        assert 'storage' in config
+        assert config['storage']['name'] == storage_name
+        assert config['storage']['path'] == storage_path

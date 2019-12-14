@@ -1,6 +1,6 @@
 import click
 
-from rireki.lib.projects_manager import get_projects, get_project_by_name
+from rireki.core.projects_manager import get_projects, get_project_by_name
 
 @click.command()
 @click.argument('project', required=False)
@@ -25,10 +25,6 @@ def process_backups(projects):
 
 
 def process_backup(project):
-    if not project.driver:
-        click.echo('Project "%s" doesn\'t have a driver configured!' % project.name)
-        return
-
     if not project.has_pending_backup():
         click.echo('Project "%s" has not pending backups' % project.name)
         return

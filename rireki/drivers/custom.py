@@ -1,6 +1,6 @@
 import click
 
-from rireki.lib.driver import Driver
+from rireki.core.driver import Driver
 
 
 class Custom(Driver):
