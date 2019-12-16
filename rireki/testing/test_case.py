@@ -62,7 +62,7 @@ class TestCase(unittest.TestCase):
         config['frequency'] = config.get('frequency') or 42
 
         if name == 'zip':
-            config['path'] = config.get('path') or '/tmp'
+            config['path'] = config.get('path') or '/tmp/rireki_testing/project'
         elif name == 'custom':
             config['command'] = config.get('command') or ''
 
@@ -80,6 +80,6 @@ class TestCase(unittest.TestCase):
         config['name'] = name
 
         if name == 'local':
-            config['path'] = config.get('path') or '/tmp'
+            config['path'] = config.get('path') or '/tmp/rireki_testing/storage'
 
         return config

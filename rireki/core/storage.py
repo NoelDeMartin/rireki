@@ -1,15 +1,22 @@
-class Storage(object):
+import re
 
-    def __init__(self, name):
-        self.name = name
+from rireki.core.configurable import Configurable
 
-    def ask_config(self):
-        pass
 
-    def read_config(self, config):
-        pass
+class Storage(Configurable):
 
-    def config(self):
-        return {
-            'name': self.name,
-        }
+    def get_last_backup(self):
+        backups = self.get_backups()
+
+        if not backups:
+            return None
+
+        return backups[0]
+
+    def get_backups(self):
+        raise Exception('Storage %s get_backups method is not implemented' % self.name)
+
+    def parse_timestamp(self, file_name):
+        matches = re.findall('(\\d+)\\.', file_name)
+
+        return int(matches[-1]) if matches else 0

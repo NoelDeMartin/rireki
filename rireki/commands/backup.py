@@ -23,10 +23,12 @@ def process_backups(projects):
     for project in projects:
         process_backup(project)
 
+    click.echo('Done!')
+
 
 def process_backup(project):
-    if not project.has_pending_backup():
-        click.echo('Project "%s" has not pending backups' % project.name)
+    if not project.has_pending_backups():
+        click.echo('Project "%s" does not have any pending backups' % project.name)
         return
 
     click.echo('Backing up %s...' % project.name)

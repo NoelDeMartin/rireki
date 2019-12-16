@@ -1,6 +1,7 @@
-import os
 import click
+import os
 
+from rireki.core.backup import Backup
 from rireki.core.storage import Storage
 
 
@@ -38,3 +39,16 @@ class Local(Storage):
                 continue
 
             return path
+
+    def get_backups(self):
+        backups = []
+
+        if not os.path.exists(self.path):
+            return backups
+
+        for file_name in os.listdir(self.path):
+            time = self.parse_timestamp(file_name)
+
+            backups.append(Backup(time, file_name))
+
+        return backups

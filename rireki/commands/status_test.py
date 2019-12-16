@@ -1,7 +1,10 @@
 import os
+import re
 
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
+from rireki.utils.file_helpers import touch
+from rireki.utils.time_helpers import now
 
 
 class TestStatus(TestCase):
@@ -16,7 +19,7 @@ class TestStatus(TestCase):
 
         assert not os.path.exists(self.home_path)
 
-    def test_with_one_project_installed(self):
+    def test_with_one_project_installed_pending(self):
         # Prepare
         project = self.create_project(driver='zip')
 
@@ -31,3 +34,23 @@ class TestStatus(TestCase):
         assert project.name in output_lines[1]
         assert 'zip' in output_lines[1]
         assert 'backup-pending' in output_lines[1]
+
+    def test_with_one_project_installed_backed_up(self):
+        # Prepare
+        project = self.create_project(
+            storage='local',
+            storage_config={'path': '/tmp/rireki_testing/storage'},
+        )
+
+        touch('/tmp/rireki_testing/storage/%s.json' % now())
+
+        # Execute
+        result = Cli.run('status')
+
+        # Assert
+        assert result.exit_code == 0
+
+        output_lines = result.output.splitlines()
+        assert len(output_lines) == 2
+        assert project.name in output_lines[1]
+        assert re.search('Backed up \\d seconds ago', output_lines[1])

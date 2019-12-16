@@ -1,7 +1,7 @@
 import click
 
 from rireki.utils.string_helpers import str_studly
-
+from rireki.utils.time_helpers import now
 
 DEFAULT_FREQUENCIES = {
     'Hourly': 60,
@@ -29,6 +29,11 @@ class Driver(object):
             'name': self.name,
             'frequency': self.frequency,
         }
+
+    def has_pending_backups(self, last_backup_time):
+        frequency_in_seconds = self.frequency * 60
+
+        return last_backup_time < now() - frequency_in_seconds
 
     def ask_frequency(self):
         frequency = click.prompt(
