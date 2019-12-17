@@ -30,7 +30,7 @@ def format_time(time):
 
 
 def calculate_column_widths(headers, rows, min_column_width):
-    column_widths = [min_column_width] * len(headers)
+    column_widths = [min_column_width] * len(list(headers))
 
     column_widths = fit_row_column_widths(headers, column_widths)
 
