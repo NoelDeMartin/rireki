@@ -1,6 +1,7 @@
 import click
 
 from rireki.core.projects_manager import get_projects
+from rireki.utils.array_helpers import array_map
 from rireki.utils.output import display_table, format_time
 from rireki.utils.time_helpers import now
 
@@ -19,7 +20,7 @@ def print_projects_status(projects):
         click.echo('No projects installed!')
         return
 
-    display_table(('Name', 'Driver', 'Status'), map(get_project_info, projects))
+    display_table(('Name', 'Driver', 'Status'), array_map(get_project_info, projects))
 
 
 def get_project_info(project):

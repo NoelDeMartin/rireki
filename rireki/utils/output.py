@@ -1,10 +1,11 @@
 import click
 
+from rireki.utils.array_helpers import array_map
 from rireki.utils.string_helpers import str_pad
 
 
 def display_table(headers, rows, min_column_width=10):
-    headers = map(lambda h: h.upper(), headers)
+    headers = array_map(lambda h: h.upper(), headers)
 
     column_widths = __calculate_column_widths(headers, rows, min_column_width)
 
@@ -35,7 +36,7 @@ def __calculate_column_widths(headers, rows, min_column_width):
     column_widths = __fit_row_column_widths(headers, column_widths)
 
     for row in rows:
-        columns_content = map(lambda cell: __render_cell_content(cell), row)
+        columns_content = array_map(lambda cell: __render_cell_content(cell), row)
         column_widths = __fit_row_column_widths(columns_content, column_widths)
 
     return column_widths
