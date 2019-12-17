@@ -11,14 +11,14 @@ def get_projects():
     if not os.path.exists(Config.projects_path):
         return []
 
-    return [parse_project_config(file_name[:-5]) for file_name in os.listdir(Config.projects_path)]
+    return [__parse_project_config(file_name[:-5]) for file_name in os.listdir(Config.projects_path)]
 
 
 def get_project_by_name(name):
     if not project_exists(name):
         return None
 
-    return parse_project_config(name)
+    return __parse_project_config(name)
 
 
 def project_exists(name):
@@ -32,20 +32,20 @@ def install_project(project):
     with open('%s/%s.conf' % (Config.projects_path, project.name), 'w') as config_file:
         config = {'name': project.name}
 
-        config['driver'] = project.driver.config()
-        config['storage'] = project.storage.config()
+        config['driver'] = project.driver.get_config()
+        config['storage'] = project.storage.get_config()
 
         config_file.write(toml.dumps(config))
 
 
-def parse_project_config(project_name):
+def __parse_project_config(project_name):
     config = toml.load('%s/%s.conf' % (Config.projects_path, project_name))
 
     name = config['name']
     driver = drivers[config['driver']['name']]()
     storage = storages[config['storage']['name']]()
 
-    driver.read_config(config['driver'])
-    storage.read_config(config['storage'])
+    driver.load_config(config['driver'])
+    storage.load_config(config['storage'])
 
     return Project(name, driver, storage)

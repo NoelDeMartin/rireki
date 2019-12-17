@@ -28,8 +28,8 @@ class TestCase(unittest.TestCase):
 
     def create_project(self, name=None, driver=None, driver_config={}, storage=None, storage_config={}):
         name = name or self.faker.name()
-        driver_config = self.create_driver_config(driver, driver_config)
-        storage_config = self.create_storage_config(storage, storage_config)
+        driver_config = self.__create_driver_config(driver, driver_config)
+        storage_config = self.__create_storage_config(storage, storage_config)
 
         if not os.path.exists('%s/projects' % self.home_path):
             os.makedirs('%s/projects' % self.home_path)
@@ -45,18 +45,18 @@ class TestCase(unittest.TestCase):
 
         return Project(
             name,
-            self.create_driver(driver, driver_config),
-            self.create_storage(storage, storage_config),
+            self.__create_driver(driver, driver_config),
+            self.__create_storage(storage, storage_config),
         )
 
-    def create_driver(self, name, config):
+    def __create_driver(self, name, config):
         driver = Driver(name)
 
-        driver.read_config(config)
+        driver.load_config(config)
 
         return driver
 
-    def create_driver_config(self, name=None, config={}):
+    def __create_driver_config(self, name=None, config={}):
         name = name or 'custom'
         config['name'] = name
         config['frequency'] = config.get('frequency') or 42
@@ -68,14 +68,14 @@ class TestCase(unittest.TestCase):
 
         return config
 
-    def create_storage(self, name, config):
+    def __create_storage(self, name, config):
         storage = Storage(name)
 
-        storage.read_config(config)
+        storage.load_config(config)
 
         return storage
 
-    def create_storage_config(self, name=None, config={}):
+    def __create_storage_config(self, name=None, config={}):
         name = name or 'local'
         config['name'] = name
 

@@ -1,5 +1,3 @@
-import re
-
 from rireki.core.configurable import Configurable
 
 
@@ -14,9 +12,4 @@ class Storage(Configurable):
         return backups[0]
 
     def get_backups(self):
-        raise Exception('Storage %s get_backups method is not implemented' % self.name)
-
-    def parse_timestamp(self, file_name):
-        matches = re.findall('(\\d+)\\.', file_name)
-
-        return int(matches[-1]) if matches else 0
+        raise Exception('Storage %s does not support get_backups method' % self.name)

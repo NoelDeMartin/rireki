@@ -1,44 +1,15 @@
-import click
 import os
 
 from rireki.core.backup import Backup
 from rireki.core.storage import Storage
+from rireki.core.traits.has_path import HasPath
 
 
-class Local(Storage):
+class Local(Storage, HasPath):
     NAME = 'local'
 
     def __init__(self):
-        super(Local, self).__init__(self.NAME)
-
-        self.path = None
-
-    def ask_config(self):
-        super(Local, self).ask_config()
-
-        self.path = self.ask_path()
-
-    def read_config(self, config):
-        super(Local, self).read_config(config)
-
-        self.path = config['path']
-
-    def config(self):
-        config = super(Local, self).config()
-
-        config['path'] = self.path
-
-        return config
-
-    def ask_path(self):
-        while True:
-            path = click.prompt('What is the path to store backups?')
-
-            if not os.path.exists(path):
-                click.echo('Path %s doesn\'t exist!' % path)
-                continue
-
-            return path
+        Storage.__init__(self, self.NAME, [HasPath])
 
     def get_backups(self):
         backups = []
@@ -47,7 +18,7 @@ class Local(Storage):
             return backups
 
         for file_name in os.listdir(self.path):
-            time = self.parse_timestamp(file_name)
+            time = Backup.parse_timestamp(file_name)
 
             backups.append(Backup(time, file_name))
 
