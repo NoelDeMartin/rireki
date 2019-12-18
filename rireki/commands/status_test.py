@@ -19,7 +19,7 @@ class TestStatus(TestCase):
 
         assert not os.path.exists(self.home_path)
 
-    def test_with_one_project_installed_pending(self):
+    def test_with_one_project_with_backups_pending(self):
         # Prepare
         project = self.create_project(driver='zip')
 
@@ -35,14 +35,14 @@ class TestStatus(TestCase):
         assert 'zip' in output_lines[1]
         assert 'backup-pending' in output_lines[1]
 
-    def test_with_one_project_installed_backed_up(self):
+    def test_with_one_project_backed_up(self):
         # Prepare
         project = self.create_project(
             storage='local',
             storage_config={'path': '/tmp/rireki_testing/storage'},
         )
 
-        touch('/tmp/rireki_testing/storage/%s.json' % now())
+        touch('/tmp/rireki_testing/storage/%s/backup' % now())
 
         # Execute
         result = Cli.run('status')

@@ -1,3 +1,6 @@
+import re
+
+
 def str_studly(text):
     words = text.split(' ')
 
@@ -6,3 +9,12 @@ def str_studly(text):
 
 def str_pad(text, length, padding=' '):
     return (text + (padding * length))[:length]
+
+
+def str_slug(text):
+    text = text.lower()
+
+    text = re.sub('\\s+', '-', text)
+    text = re.sub('[^\\w-]+', '', text)
+
+    return text

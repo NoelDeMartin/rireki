@@ -1,4 +1,5 @@
 import click
+import datetime
 
 from rireki.utils.array_helpers import array_map
 from rireki.utils.string_helpers import str_pad
@@ -15,23 +16,15 @@ def display_table(headers, rows, min_column_width=10):
         click.echo(__format_table_row(row, column_widths))
 
 
-def format_time(time):
-    if time <= 60:
-        return __format_time_unit(time, 'second')
-
-    time = time / 60
-    if time <= 60:
-        return __format_time_unit(time, 'minute')
-
-    time = time / 24
-    if time <= 24:
-        return __format_time_unit(time, 'hour')
-
-    return __format_time_unit(time, 'day')
+def format_time(time, format='interval'):
+    if format == 'interval':
+        return __format_time_interval(time)
+    else:
+        return __format_time_date(time)
 
 
 def __calculate_column_widths(headers, rows, min_column_width):
-    column_widths = [min_column_width] * len(list(headers))
+    column_widths = [min_column_width] * len(headers)
 
     column_widths = __fit_row_column_widths(headers, column_widths)
 
@@ -47,6 +40,25 @@ def __fit_row_column_widths(columns_content, column_widths):
         column_widths[index] = max(column_widths[index], len(content))
 
     return column_widths
+
+
+def __format_time_interval(time):
+    if time <= 60:
+        return __format_time_unit(time, 'second')
+
+    time = time / 60
+    if time <= 60:
+        return __format_time_unit(time, 'minute')
+
+    time = time / 24
+    if time <= 24:
+        return __format_time_unit(time, 'hour')
+
+    return __format_time_unit(time, 'day')
+
+
+def __format_time_date(time):
+    return datetime.fromtimestamp(time).strftime('%Y-%m-%d')
 
 
 def __format_time_unit(magnitude, name):

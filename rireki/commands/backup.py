@@ -32,4 +32,4 @@ def process_backup(project):
         return
 
     click.echo('Backing up %s...' % project.name)
-    project.backup()
+    project.perform_backup()

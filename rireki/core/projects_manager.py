@@ -44,8 +44,12 @@ def __parse_project_config(project_name):
     name = config['name']
     driver = drivers[config['driver']['name']]()
     storage = storages[config['storage']['name']]()
+    project = Project(name, driver, storage)
 
+    driver.project = project
     driver.load_config(config['driver'])
+
+    storage.project = project
     storage.load_config(config['storage'])
 
-    return Project(name, driver, storage)
+    return project

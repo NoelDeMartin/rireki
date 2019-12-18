@@ -1,8 +1,8 @@
 import os
 
-from rireki.core.backup import Backup
 from rireki.core.storage import Storage
 from rireki.core.traits.has_path import HasPath
+from shutil import copyfile
 
 
 class Local(Storage, HasPath):
@@ -11,15 +11,16 @@ class Local(Storage, HasPath):
     def __init__(self):
         Storage.__init__(self, self.NAME, [HasPath])
 
-    def get_backups(self):
-        backups = []
-
+    def _get_backup_names(self):
         if not os.path.exists(self.path):
-            return backups
+            return []
 
-        for file_name in os.listdir(self.path):
-            time = Backup.parse_timestamp(file_name)
+        return os.listdir(self.path)
 
-            backups.append(Backup(time, file_name))
+    def _upload_file(self, folder_name, file):
+        root_path = os.path.join(self.path, folder_name)
 
-        return backups
+        if not os.path.exists(root_path):
+            os.makedirs(root_path)
+
+        copyfile(file, os.path.join(root_path, os.path.basename(file)))
