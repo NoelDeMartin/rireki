@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from rireki.core.traits.configurable import Configurable
 from rireki.core.traits.has_frequency import HasFrequency
 from rireki.utils.time_helpers import now
@@ -16,14 +19,23 @@ class Driver(Configurable, HasFrequency):
         return last_backup_time < now() - frequency_in_seconds
 
     def perform_backup(self):
-        path = self._prepare_backup_files()
+        tmp_path = self._create_temporary_folder()
 
-        self.project.storage.upload_backup_files(path)
+        try:
+            self._prepare_backup_files(tmp_path)
+            self.project.storage.upload_backup_files(tmp_path)
+        finally:
+            self._clean_backup_files(tmp_path)
 
-        self._clean_backup_files(path)
+    def _create_temporary_folder(self):
+        path = '/tmp/rireki-{}-{}-{}'.format(self.name, self.project.slug, now())
 
-    def _prepare_backup_files(self):
-        raise Exception('%s driver must implement _prepare_backup_files method' % self.name)
+        os.makedirs(path)
 
-    def _clean_backup_files(self):
+        return path
+
+    def _clean_backup_files(self, path):
+        shutil.rmtree(path)
+
+    def _prepare_backup_files(self, path):
         raise Exception('%s driver must implement _prepare_backup_files method' % self.name)

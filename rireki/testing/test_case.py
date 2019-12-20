@@ -61,7 +61,7 @@ class TestCase(unittest.TestCase):
         config['name'] = name
         config['frequency'] = config.get('frequency') or 42
 
-        if name == 'zip':
+        if name == 'files':
             config['path'] = config.get('path') or '/tmp/rireki_testing/project'
         elif name == 'custom':
             config['command'] = config.get('command') or ''

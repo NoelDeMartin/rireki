@@ -41,10 +41,10 @@ class TestAdd(TestCase):
         assert 'name' in config
         assert config['name'] == project_name
 
-    def test_new_project_with_zip_driver(self):
+    def test_new_project_with_files_driver(self):
         # Prepare
         project_name = self.faker.name()
-        driver_name = 'zip'
+        driver_name = 'files'
         driver_frequency_name = 'daily'
         driver_frequency_minutes = 1440
         driver_path = '/tmp'

@@ -1,8 +1,8 @@
 from rireki.drivers.custom import Custom
-from rireki.drivers.zip import Zip
+from rireki.drivers.files import Files
 
 
 drivers = {
     Custom.NAME: Custom,
-    Zip.NAME: Zip,
+    Files.NAME: Files,
 }

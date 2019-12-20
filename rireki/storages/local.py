@@ -15,7 +15,7 @@ class Local(Storage, HasPath):
         if not os.path.exists(self.path):
             return []
 
-        return os.listdir(self.path)
+        return sorted(os.listdir(self.path), reverse=True)
 
     def _upload_file(self, folder_name, file):
         root_path = os.path.join(self.path, folder_name)

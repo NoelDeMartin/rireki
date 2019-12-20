@@ -1,13 +1,11 @@
 import json
 import os
-import shutil
 import subprocess
 
 from rireki.core.driver import Driver
 from rireki.core.traits.has_command import HasCommand
 from rireki.core.traits.has_timeout import HasTimeout
 from rireki.utils.file_helpers import file_put_contents
-from rireki.utils.time_helpers import now
 from threading import Thread
 
 
@@ -17,24 +15,10 @@ class Custom(Driver, HasCommand, HasTimeout):
     def __init__(self):
         Driver.__init__(self, self.NAME, [HasCommand, HasTimeout])
 
-    def _prepare_backup_files(self):
-        tmp_path = '/tmp/rireki-custom-' + self.project.slug + '-' + str(now())
+    def _prepare_backup_files(self, path):
+        logs = self.__run_command(path)
 
-        try:
-            os.makedirs(tmp_path)
-
-            logs = self.__run_command(tmp_path)
-
-            file_put_contents(os.path.join(tmp_path, 'logs.json'), json.dumps(logs))
-
-            return tmp_path
-        except Exception as error:
-            shutil.rmtree(tmp_path)
-
-            raise error
-
-    def _clean_backup_files(self, path):
-        shutil.rmtree(path)
+        file_put_contents(os.path.join(path, 'logs.json'), json.dumps(logs))
 
     def __run_command(self, path):
         self.process = None
