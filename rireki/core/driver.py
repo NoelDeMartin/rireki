@@ -1,4 +1,4 @@
-from rireki.core.configurable import Configurable
+from rireki.core.traits.configurable import Configurable
 from rireki.core.traits.has_frequency import HasFrequency
 from rireki.utils.time_helpers import now
 

@@ -1,6 +1,6 @@
 import click
 
-from rireki.core.projects_manager import get_projects, get_project_by_name
+from rireki.core.projects_manager import ProjectsManager
 
 @click.command()
 @click.argument('project', required=False)
@@ -8,25 +8,25 @@ def backup(project):
     """Perform pending backups"""
 
     if project:
-        projects = [get_project_by_name(project)]
+        projects = [ProjectsManager.get_project_by_name(project)]
     else:
-        projects = get_projects()
+        projects = ProjectsManager.get_projects()
 
     if not projects:
         click.echo('No projects installed!')
         return
 
-    process_backups(projects)
+    __process_backups(projects)
 
 
-def process_backups(projects):
+def __process_backups(projects):
     for project in projects:
-        process_backup(project)
+        __process_backup(project)
 
     click.echo('Done!')
 
 
-def process_backup(project):
+def __process_backup(project):
     if not project.has_pending_backups():
         click.echo('Project "%s" does not have any pending backups' % project.name)
         return

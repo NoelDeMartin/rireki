@@ -20,7 +20,7 @@ class TestBackup(TestCase):
 
     def test_without_pending_backups(self):
         # Prepare
-        project = self.create_project(
+        project = self._create_project(
             storage='local',
             storage_config={'path': '/tmp/rireki_testing/storage'},
         )
@@ -40,7 +40,7 @@ class TestBackup(TestCase):
         time = now()
         command_output = self.faker.sentence()
         storage_path = '/tmp/rireki_testing/storage'
-        project = self.create_project(
+        project = self._create_project(
             driver='custom',
             driver_config={'command': 'echo "%s"' % command_output},
             storage='local',

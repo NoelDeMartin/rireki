@@ -3,53 +3,56 @@ import toml
 
 from rireki.core.config import Config
 from rireki.core.project import Project
-from rireki.drivers.all import drivers
-from rireki.storages.all import storages
+from rireki.drivers.index import drivers
+from rireki.storages.index import storages
 
 
-def get_projects():
-    if not os.path.exists(Config.projects_path):
-        return []
+class ProjectsManager():
 
-    return [__parse_project_config(file_name[:-5]) for file_name in os.listdir(Config.projects_path)]
+    @classmethod
+    def get_projects(cls):
+        if not os.path.exists(Config.projects_path):
+            return []
 
+        return [cls.__parse_project_config(file_name[:-5]) for file_name in os.listdir(Config.projects_path)]
 
-def get_project_by_name(name):
-    if not project_exists(name):
-        return None
+    @classmethod
+    def get_project_by_name(cls, name):
+        if not cls.project_exists(name):
+            return None
 
-    return __parse_project_config(name)
+        return cls.__parse_project_config(name)
 
+    @classmethod
+    def project_exists(cls, name):
+        return os.path.exists('%s/%s.conf' % (Config.projects_path, name))
 
-def project_exists(name):
-    return os.path.exists('%s/%s.conf' % (Config.projects_path, name))
+    @classmethod
+    def install_project(cls, project):
+        if not os.path.exists(Config.projects_path):
+            os.makedirs(Config.projects_path)
 
+        with open('%s/%s.conf' % (Config.projects_path, project.name), 'w') as config_file:
+            config = {'name': project.name}
 
-def install_project(project):
-    if not os.path.exists(Config.projects_path):
-        os.makedirs(Config.projects_path)
+            config['driver'] = project.driver.get_config()
+            config['storage'] = project.storage.get_config()
 
-    with open('%s/%s.conf' % (Config.projects_path, project.name), 'w') as config_file:
-        config = {'name': project.name}
+            config_file.write(toml.dumps(config))
 
-        config['driver'] = project.driver.get_config()
-        config['storage'] = project.storage.get_config()
+    @classmethod
+    def __parse_project_config(cls, project_name):
+        config = toml.load('%s/%s.conf' % (Config.projects_path, project_name))
 
-        config_file.write(toml.dumps(config))
+        name = config['name']
+        driver = drivers[config['driver']['name']]()
+        storage = storages[config['storage']['name']]()
+        project = Project(name, driver, storage)
 
+        driver.project = project
+        driver.load_config(config['driver'])
 
-def __parse_project_config(project_name):
-    config = toml.load('%s/%s.conf' % (Config.projects_path, project_name))
+        storage.project = project
+        storage.load_config(config['storage'])
 
-    name = config['name']
-    driver = drivers[config['driver']['name']]()
-    storage = storages[config['storage']['name']]()
-    project = Project(name, driver, storage)
-
-    driver.project = project
-    driver.load_config(config['driver'])
-
-    storage.project = project
-    storage.load_config(config['storage'])
-
-    return project
+        return project

@@ -13,7 +13,7 @@ from rireki.testing.cli import Cli
 class TestCase(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(TestCase, self).__init__(*args, **kwargs)
+        unittest.TestCase.__init__(self, *args, **kwargs)
 
         self.home_path = '/tmp/rireki_testing'
         self.faker = Faker()
@@ -26,7 +26,7 @@ class TestCase(unittest.TestCase):
         if os.path.exists(self.home_path):
             shutil.rmtree(self.home_path)
 
-    def create_project(self, name=None, driver=None, driver_config={}, storage=None, storage_config={}):
+    def _create_project(self, name=None, driver=None, driver_config={}, storage=None, storage_config={}):
         name = name or self.faker.name()
         driver_config = self.__create_driver_config(driver, driver_config)
         storage_config = self.__create_storage_config(storage, storage_config)

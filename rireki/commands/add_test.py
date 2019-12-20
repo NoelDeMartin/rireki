@@ -9,7 +9,7 @@ class TestAdd(TestCase):
 
     def test_existing_project(self):
         # Prepare
-        project = self.create_project()
+        project = self._create_project()
 
         # Execute
         result = Cli.run('add', project.name)

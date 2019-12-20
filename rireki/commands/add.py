@@ -1,9 +1,9 @@
 import click
 
 from rireki.core.project import Project
-from rireki.core.projects_manager import project_exists, install_project
-from rireki.drivers.all import drivers
-from rireki.storages.all import storages
+from rireki.core.projects_manager import ProjectsManager
+from rireki.drivers.index import drivers
+from rireki.storages.index import storages
 
 
 @click.command()
@@ -13,17 +13,17 @@ from rireki.storages.all import storages
 def add(name, driver=None, storage=None):
     """Install a new project"""
 
-    if project_exists(name):
+    if ProjectsManager.project_exists(name):
         click.echo('Project with name "%s" already installed!' % name)
         return
 
-    driver = resolve_driver(driver)
-    storage = resolve_storage(storage)
+    driver = __resolve_driver(driver)
+    storage = __resolve_storage(storage)
 
-    add_new_project(name, driver, storage)
+    __add_new_project(name, driver, storage)
 
 
-def resolve_driver(driver):
+def __resolve_driver(driver):
     if driver:
         return driver
 
@@ -33,7 +33,7 @@ def resolve_driver(driver):
     )
 
 
-def resolve_storage(storage):
+def __resolve_storage(storage):
     if storage:
         return storage
 
@@ -43,17 +43,17 @@ def resolve_storage(storage):
     )
 
 
-def add_new_project(project_name, driver_name, storage_name):
-    driver = create_driver(driver_name)
-    storage = create_storage(storage_name)
-    project = create_project(project_name, driver, storage)
+def __add_new_project(project_name, driver_name, storage_name):
+    driver = __create_driver(driver_name)
+    storage = __create_storage(storage_name)
+    project = __create_project(project_name, driver, storage)
 
-    install_project(project)
+    ProjectsManager.install_project(project)
 
     click.echo('Project "%s" has been installed!' % project.name)
 
 
-def create_driver(name):
+def __create_driver(name):
     driver = drivers[name]()
 
     driver.ask_config()
@@ -61,7 +61,7 @@ def create_driver(name):
     return driver
 
 
-def create_storage(name):
+def __create_storage(name):
     storage = storages[name]()
 
     storage.ask_config()
@@ -69,5 +69,5 @@ def create_storage(name):
     return storage
 
 
-def create_project(name, driver, storage):
+def __create_project(name, driver, storage):
     return Project(name, driver, storage)

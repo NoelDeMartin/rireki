@@ -1,5 +1,5 @@
 from rireki.core.backup import Backup
-from rireki.core.configurable import Configurable
+from rireki.core.traits.configurable import Configurable
 from rireki.utils.array_helpers import array_map
 from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now

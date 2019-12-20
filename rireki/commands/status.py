@@ -1,6 +1,6 @@
 import click
 
-from rireki.core.projects_manager import get_projects
+from rireki.core.projects_manager import ProjectsManager
 from rireki.utils.array_helpers import array_map
 from rireki.utils.output import display_table, format_time
 from rireki.utils.time_helpers import now
@@ -10,20 +10,20 @@ from rireki.utils.time_helpers import now
 def status():
     """Show status of installed projects"""
 
-    projects = get_projects()
+    projects = ProjectsManager.get_projects()
 
-    print_projects_status(projects)
+    __display_projects_status(projects)
 
 
-def print_projects_status(projects):
+def __display_projects_status(projects):
     if not projects:
         click.echo('No projects installed!')
         return
 
-    display_table(('Name', 'Driver', 'Status'), array_map(get_project_info, projects))
+    display_table(('Name', 'Driver', 'Status'), array_map(__get_project_info, projects))
 
 
-def get_project_info(project):
+def __get_project_info(project):
     if project.has_pending_backups():
         status = {
             'text': 'backup-pending',
