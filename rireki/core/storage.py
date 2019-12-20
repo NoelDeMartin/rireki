@@ -1,7 +1,7 @@
 import os
 
 from rireki.core.backup import Backup
-from rireki.core.traits.configurable import Configurable
+from rireki.core.configurable import Configurable
 from rireki.utils.array_helpers import array_map
 from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now
@@ -9,8 +9,8 @@ from rireki.utils.time_helpers import now
 
 class Storage(Configurable):
 
-    def __init__(self, name, traits=[]):
-        Configurable.__init__(self, name, traits)
+    def __init__(self):
+        Configurable.__init__(self)
 
         self.project = None
 

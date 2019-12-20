@@ -1,13 +1,13 @@
-class HasTimeout():
+class Configurable():
 
     def __init__(self):
-        self.timeout = 60
+        self.name = self.NAME
 
     def ask_config(self):
         pass
 
     def load_config(self, config):
-        self.timeout = config['timeout']
+        pass
 
     def get_config(self):
-        return {'timeout': self.timeout}
+        return {'name': self.name}

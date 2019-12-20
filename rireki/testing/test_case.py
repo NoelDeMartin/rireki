@@ -4,9 +4,9 @@ import toml
 import unittest
 
 from faker import Faker
-from rireki.core.driver import Driver
 from rireki.core.project import Project
-from rireki.core.storage import Storage
+from rireki.drivers.index import drivers
+from rireki.storages.index import storages
 from rireki.testing.cli import Cli
 
 
@@ -45,12 +45,12 @@ class TestCase(unittest.TestCase):
 
         return Project(
             name,
-            self.__create_driver(driver, driver_config),
-            self.__create_storage(storage, storage_config),
+            self.__create_driver(driver_config),
+            self.__create_storage(storage_config),
         )
 
-    def __create_driver(self, name, config):
-        driver = Driver(name)
+    def __create_driver(self, config):
+        driver = drivers[config['name']]()
 
         driver.load_config(config)
 
@@ -69,8 +69,8 @@ class TestCase(unittest.TestCase):
 
         return config
 
-    def __create_storage(self, name, config):
-        storage = Storage(name)
+    def __create_storage(self, config):
+        storage = storages[config['name']]()
 
         storage.load_config(config)
 

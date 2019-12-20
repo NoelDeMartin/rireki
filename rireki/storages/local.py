@@ -1,15 +1,34 @@
+import click
 import os
 
 from rireki.core.storage import Storage
-from rireki.core.traits.has_path import HasPath
 from shutil import copyfile
 
 
-class Local(Storage, HasPath):
+class Local(Storage):
     NAME = 'local'
 
     def __init__(self):
-        Storage.__init__(self, self.NAME, [HasPath])
+        Storage.__init__(self)
+
+        self.path = None
+
+    def ask_config(self):
+        Storage.ask_config(self)
+
+        self.path = self.__ask_path()
+
+    def load_config(self, config):
+        Storage.load_config(self, config)
+
+        self.path = config['path']
+
+    def get_config(self):
+        config = Storage.get_config(self)
+
+        config['path'] = self.path
+
+        return config
 
     def _get_backup_names(self):
         if not os.path.exists(self.path):
@@ -24,3 +43,6 @@ class Local(Storage, HasPath):
             os.makedirs(root_path)
 
         copyfile(file, os.path.join(root_path, os.path.basename(file)))
+
+    def __ask_path(self):
+        return click.prompt('What is the path?')
