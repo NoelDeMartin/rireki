@@ -65,4 +65,4 @@ class TestBackup(TestCase):
         assert os.path.exists(backup_path)
 
         logs = json.loads(file_get_contents(backup_path))
-        assert command_output in logs.get('output')
+        assert command_output in logs.get('stdout')

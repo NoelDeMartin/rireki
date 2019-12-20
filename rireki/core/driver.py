@@ -16,11 +16,11 @@ class Driver(Configurable, HasFrequency):
         return last_backup_time < now() - frequency_in_seconds
 
     def perform_backup(self):
-        files = self._prepare_backup_files()
+        path = self._prepare_backup_files()
 
-        self.project.storage.upload_backup_files(files)
+        self.project.storage.upload_backup_files(path)
 
-        self._clean_backup_files(files)
+        self._clean_backup_files(path)
 
     def _prepare_backup_files(self):
         raise Exception('%s driver must implement _prepare_backup_files method' % self.name)

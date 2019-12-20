@@ -65,6 +65,7 @@ class TestCase(unittest.TestCase):
             config['path'] = config.get('path') or '/tmp/rireki_testing/project'
         elif name == 'custom':
             config['command'] = config.get('command') or ''
+            config['timeout'] = config.get('timeout') or 60
 
         return config
 

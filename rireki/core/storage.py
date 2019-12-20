@@ -1,3 +1,5 @@
+import os
+
 from rireki.core.backup import Backup
 from rireki.core.traits.configurable import Configurable
 from rireki.utils.array_helpers import array_map
@@ -12,15 +14,15 @@ class Storage(Configurable):
 
         self.project = None
 
-    def upload_backup_files(self, files):
+    def upload_backup_files(self, path):
         folder_name = '{slug}-backup-{date}-{timestamp}'.format(
             slug=self.project.slug,
             date=format_time(now(), 'date'),
             timestamp=now(),
         )
 
-        for file in files:
-            self._upload_file(folder_name, file)
+        for file in os.listdir(path):
+            self._upload_file(folder_name, os.path.join(path, file))
 
     def get_last_backup(self):
         backups = self.get_backups()

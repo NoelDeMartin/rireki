@@ -1,5 +1,4 @@
 import click
-import os
 
 
 class HasPath():
@@ -17,11 +16,4 @@ class HasPath():
         return {'path': self.path}
 
     def __ask_path(self):
-        while True:
-            path = click.prompt('What is the path to store backups?')
-
-            if not os.path.exists(path):
-                click.echo('Path %s doesn\'t exist!' % path)
-                continue
-
-            return path
+        return click.prompt('What is the path?')
