@@ -1,7 +1,11 @@
 from rireki.core.project import Project
 from rireki.drivers.custom import Custom
 from rireki.testing.test_case import TestCase
-from unittest.mock import Mock
+
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
 
 
 class TestBackup(TestCase):
