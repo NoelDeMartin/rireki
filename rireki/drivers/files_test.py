@@ -1,13 +1,9 @@
 import os
 
+from mock import ANY, Mock, patch
 from rireki.core.project import Project
 from rireki.drivers.files import Files
 from rireki.testing.test_case import TestCase
-
-try:
-    from unittest.mock import ANY, Mock, patch
-except ImportError:
-    from mock import ANY, Mock, patch
 
 
 class TestBackup(TestCase):
