@@ -20,6 +20,9 @@ class Project(object):
 
         return self.driver.has_pending_backups(last_backup.time)
 
+    def get_backups(self):
+        return self.storage.get_backups()
+
     def get_last_backup(self):
         return self.storage.get_last_backup()
 

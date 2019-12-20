@@ -1,6 +1,6 @@
 import click
-import datetime
 
+from datetime import datetime
 from rireki.utils.array_helpers import array_map
 from rireki.utils.string_helpers import str_pad
 
@@ -16,11 +16,11 @@ def display_table(headers, rows, min_column_width=10):
         click.echo(__format_table_row(row, column_widths))
 
 
-def format_time(time, format='interval'):
-    if format == 'interval':
-        return __format_time_interval(time)
-    else:
+def format_time(time, format):
+    if format == 'date':
         return __format_time_date(time)
+    elif format == 'interval':
+        return __format_time_interval(time)
 
 
 def __calculate_column_widths(headers, rows, min_column_width):

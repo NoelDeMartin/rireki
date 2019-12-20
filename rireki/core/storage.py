@@ -15,7 +15,7 @@ class Storage(Configurable):
     def upload_backup_files(self, files):
         folder_name = '{slug}-backup-{date}-{timestamp}'.format(
             slug=self.project.slug,
-            date=format_time(now()),
+            date=format_time(now(), 'date'),
             timestamp=now(),
         )
 

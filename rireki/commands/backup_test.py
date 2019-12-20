@@ -59,7 +59,7 @@ class TestBackup(TestCase):
 
         backup_path = os.path.join(
             storage_path,
-            '{}-backup-{}-{}'.format(project.slug, format_time(time), time),
+            '{}-backup-{}-{}'.format(project.slug, format_time(time, 'date'), time),
             'logs.json',
         )
         assert os.path.exists(backup_path)
