@@ -3,6 +3,7 @@ import toml
 
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
+from rireki.utils.string_helpers import str_slug
 
 
 class TestAdd(TestCase):
@@ -47,14 +48,20 @@ class TestAdd(TestCase):
         driver_name = 'files'
         driver_frequency_name = 'daily'
         driver_frequency_minutes = 1440
-        driver_path = '/tmp'
+        driver_paths = [
+            '/tmp',
+            os.path.join('tmp', str_slug(self.faker.word())),
+        ]
 
         # Execute
         result = Cli.run(
             'add', project_name,
             '--driver=' + driver_name,
             '--storage=local',
-            input=(driver_frequency_name, driver_path, '/tmp'),
+            input=self.__get_new_project_with_files_driver_input(
+                driver_frequency_name,
+                driver_paths,
+            ),
         )
 
         # Assert
@@ -65,7 +72,7 @@ class TestAdd(TestCase):
         assert 'driver' in config
         assert config['driver']['name'] == driver_name
         assert config['driver']['frequency'] == driver_frequency_minutes
-        assert config['driver']['path'] == driver_path
+        assert config['driver']['paths'] == driver_paths
 
     def test_new_project_with_custom_driver(self):
         # Prepare
@@ -115,3 +122,25 @@ class TestAdd(TestCase):
         assert 'storage' in config
         assert config['storage']['name'] == storage_name
         assert config['storage']['path'] == storage_path
+
+    def __get_new_project_with_files_driver_input(self, driver_frequency_name, driver_paths):
+        input = []
+
+        # Driver frequency
+        input.append(driver_frequency_name)
+
+        # Driver paths - First path
+        input.append(driver_paths[0])
+        # Driver paths - Yes, add more paths
+        input.append('y')
+        # Driver paths - Second path
+        input.append(driver_paths[1])
+        # Driver paths - Yes, path is correct even though it doesn't exist
+        input.append('y')
+        # Driver paths - No, no more paths
+        input.append('N')
+
+        # Storage path
+        input.append('/tmp')
+
+        return input

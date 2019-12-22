@@ -45,4 +45,4 @@ class Local(Storage):
         copyfile(file, os.path.join(root_path, os.path.basename(file)))
 
     def __ask_path(self):
-        return click.prompt('What is the path?')
+        return click.prompt('Where do you want to store the backup files?')

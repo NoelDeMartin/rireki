@@ -62,7 +62,7 @@ class TestCase(unittest.TestCase):
         config['frequency'] = config.get('frequency') or 42
 
         if name == 'files':
-            config['path'] = config.get('path') or '/tmp/rireki_testing/project'
+            config['paths'] = config.get('paths') or ['/tmp/rireki_testing/project']
         elif name == 'custom':
             config['command'] = config.get('command') or ''
             config['timeout'] = config.get('timeout') or 60
