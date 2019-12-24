@@ -2,7 +2,7 @@ from rireki.testing.test_case import TestCase
 from rireki.utils.string_helpers import str_slug
 
 
-class TestBackup(TestCase):
+class TestStringHelpers(TestCase):
 
     def test_slug(self):
         assert str_slug('Miyamoto Musashi') == 'miyamoto-musashi'

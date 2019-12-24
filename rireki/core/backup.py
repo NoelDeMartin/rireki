@@ -3,6 +3,10 @@ import re
 
 class Backup(object):
 
+    @classmethod
+    def is_backup_name(cls, name):
+        return re.search('(\\d+)$', name)
+
     def __init__(self, name):
         self.name = name
 

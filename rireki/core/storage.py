@@ -2,7 +2,6 @@ import os
 
 from rireki.core.backup import Backup
 from rireki.core.configurable import Configurable
-from rireki.utils.array_helpers import array_map
 from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now
 
@@ -35,7 +34,7 @@ class Storage(Configurable):
     def get_backups(self):
         names = self._get_backup_names()
 
-        return array_map(lambda name: Backup(name), names)
+        return [Backup(name) for name in names if Backup.is_backup_name(name)]
 
     def _get_backup_names(self):
         raise Exception('%s storage must implement _get_backup_names method' % self.name)

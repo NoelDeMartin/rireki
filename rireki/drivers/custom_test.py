@@ -4,7 +4,7 @@ from rireki.drivers.custom import Custom
 from rireki.testing.test_case import TestCase
 
 
-class TestBackup(TestCase):
+class TestCustom(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)

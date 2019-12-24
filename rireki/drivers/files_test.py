@@ -9,7 +9,7 @@ from rireki.utils.string_helpers import str_slug
 from rireki.utils.time_helpers import now
 
 
-class TestBackup(TestCase):
+class TestFiles(TestCase):
 
     def setUp(self):
         TestCase.setUp(self)
