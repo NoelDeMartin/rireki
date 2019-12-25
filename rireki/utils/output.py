@@ -43,18 +43,20 @@ def __fit_row_column_widths(columns_content, column_widths):
 
 
 def __format_time_interval(time):
-    if time <= 60:
-        return __format_time_unit(time, 'second')
+    seconds = time
+    if seconds <= 60:
+        return __format_time_unit(seconds, 'second')
 
-    time = time / 60
-    if time <= 60:
-        return __format_time_unit(time, 'minute')
+    minutes = seconds / 60
+    if minutes <= 60:
+        return __format_time_unit(minutes, 'minute')
 
-    time = time / 24
-    if time <= 24:
-        return __format_time_unit(time, 'hour')
+    hours = minutes / 60
+    if hours <= 24:
+        return __format_time_unit(hours, 'hour')
 
-    return __format_time_unit(time, 'day')
+    days = hours / 24
+    return __format_time_unit(days, 'day')
 
 
 def __format_time_date(time):
@@ -62,6 +64,8 @@ def __format_time_date(time):
 
 
 def __format_time_unit(magnitude, name):
+    magnitude = int(magnitude)
+
     if not magnitude == 1:
         name = name + 's'
 
