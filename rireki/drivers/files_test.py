@@ -44,7 +44,7 @@ class TestFiles(TestCase):
         backup = self.storage.get_last_backup()
         assert backup is not None
 
-        assert os.path.exists(os.path.join(storage_path, backup.name, 'backup.zip'))
+        assert os.path.exists(os.path.join(storage_path, backup.name + '.zip'))
 
     def test_creates_backups_with_multiple_paths(self):
         # Prepare
@@ -73,4 +73,4 @@ class TestFiles(TestCase):
         backup = self.storage.get_last_backup()
         assert backup is not None
 
-        assert os.path.exists(os.path.join(storage_path, backup.name, 'backup.zip'))
+        assert os.path.exists(os.path.join(storage_path, backup.name + '.zip'))

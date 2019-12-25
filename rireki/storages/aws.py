@@ -5,6 +5,7 @@ import re
 
 from functools import reduce
 from rireki.core.storage import Storage
+from rireki.utils.file_helpers import file_get_name
 
 
 class AmazonWebServices(Storage):
@@ -55,18 +56,20 @@ class AmazonWebServices(Storage):
         paginator = client.get_paginator('list_objects')
         page_iterator = paginator.paginate(Bucket=self.bucket, Prefix=self.path)
 
-        return reduce(
+        files = reduce(
             sum,
             [self.__parse_page_files(self.path, page) for page in page_iterator],
         )
 
-    def _upload_file(self, folder_name, file):
+        return sorted([file_get_name(file) for file in files], reverse=True)
+
+    def _upload_file(self, source, destination):
         client = self.__create_s3_client()
 
         client.upload_file(
-            file,
+            source,
             self.bucket,
-            os.path.join(self.path, folder_name, os.path.basename(file)),
+            os.path.join(self.path, destination),
         )
 
     def _get_service_name(self):

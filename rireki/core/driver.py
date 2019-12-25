@@ -49,8 +49,9 @@ class Driver(Configurable):
         tmp_path = self._create_temporary_folder()
 
         try:
-            self._prepare_backup_files(tmp_path)
-            self.project.storage.upload_backup_files(tmp_path)
+            files_path = self._prepare_backup_files(tmp_path)
+
+            self.project.storage.create_backup(files_path)
         finally:
             self._clean_backup_files(tmp_path)
 

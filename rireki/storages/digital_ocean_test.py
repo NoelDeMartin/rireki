@@ -91,7 +91,7 @@ class TestDigitalOcean(TestCase):
         client.return_value = mock_client
 
         # Execute
-        self.storage.upload_backup_files(tmp_path)
+        self.storage.create_backup(tmp_path)
 
         # Assert
         client.assert_called_once_with(

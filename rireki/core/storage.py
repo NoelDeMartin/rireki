@@ -2,6 +2,7 @@ import os
 
 from rireki.core.backup import Backup
 from rireki.core.configurable import Configurable
+from rireki.utils.file_helpers import file_get_extension
 from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now
 
@@ -13,15 +14,24 @@ class Storage(Configurable):
 
         self.project = None
 
-    def upload_backup_files(self, path):
-        folder_name = '{slug}-backup-{date}-{timestamp}'.format(
+    def create_backup(self, files_path):
+        backup_name = '{slug}-backup-{date}-{timestamp}'.format(
             slug=self.project.slug,
             date=format_time(now(), 'date'),
             timestamp=now(),
         )
 
-        for file in os.listdir(path):
-            self._upload_file(folder_name, os.path.join(path, file))
+        if os.path.isfile(files_path):
+            self._upload_file(
+                files_path,
+                '{}.{}'.format(backup_name, file_get_extension(files_path)),
+            )
+        elif os.path.isdir(files_path):
+            for file in os.listdir(files_path):
+                self._upload_file(
+                    os.path.join(files_path, file),
+                    os.path.join(backup_name, file),
+                )
 
     def get_last_backup(self):
         backups = self.get_backups()
@@ -39,5 +49,5 @@ class Storage(Configurable):
     def _get_backup_names(self):
         raise Exception('%s storage must implement _get_backup_names method' % self.name)
 
-    def _upload_file(self, folder_name, files):
+    def _upload_file(self, source, destination):
         raise Exception('%s storage must implement _upload_file method' % self.name)

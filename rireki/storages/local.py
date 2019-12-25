@@ -2,6 +2,7 @@ import click
 import os
 
 from rireki.core.storage import Storage
+from rireki.utils.file_helpers import file_get_name
 from shutil import copyfile
 
 
@@ -34,15 +35,21 @@ class Local(Storage):
         if not os.path.exists(self.path):
             return []
 
-        return sorted(os.listdir(self.path), reverse=True)
+        names = []
 
-    def _upload_file(self, folder_name, file):
-        root_path = os.path.join(self.path, folder_name)
+        for file in os.listdir(self.path):
+            names.append(file_get_name(file))
 
-        if not os.path.exists(root_path):
-            os.makedirs(root_path)
+        return sorted(names, reverse=True)
 
-        copyfile(file, os.path.join(root_path, os.path.basename(file)))
+    def _upload_file(self, source, destination):
+        destination = os.path.join(self.path, destination)
+        destination_parent = os.path.dirname(destination)
+
+        if not os.path.exists(destination_parent):
+            os.makedirs(destination_parent)
+
+        copyfile(source, destination)
 
     def __ask_path(self):
         return click.prompt('Where do you want to store the backup files?')

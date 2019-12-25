@@ -41,6 +41,8 @@ class Custom(Driver):
 
         file_put_contents(os.path.join(path, 'logs.json'), json.dumps(logs))
 
+        return path
+
     def __ask_command(self):
         return click.prompt('Enter the command you want to execute to perform backups')
 

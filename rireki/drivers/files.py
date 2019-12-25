@@ -37,6 +37,8 @@ class Files(Driver):
         with TemporaryBackupFolder(self) as folder:
             shutil.make_archive(os.path.join(path, 'backup'), format, folder.path)
 
+        return os.path.join(path, 'backup.' + format)
+
     def __ask_paths(self):
         paths = []
         continue_asking = True
