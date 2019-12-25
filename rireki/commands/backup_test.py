@@ -21,11 +21,11 @@ class TestBackup(TestCase):
     def test_without_pending_backups(self):
         # Prepare
         project = self._create_project(
-            storage='local',
-            storage_config={'path': '/tmp/rireki_testing/storage'},
+            store='local',
+            store_config={'path': '/tmp/rireki_testing/store'},
         )
 
-        touch('/tmp/rireki_testing/storage/%s/backup' % now())
+        touch('/tmp/rireki_testing/store/%s/backup' % now())
 
         # Execute
         result = Cli.run('backup')
@@ -39,12 +39,12 @@ class TestBackup(TestCase):
         # Prepare
         time = now()
         command_output = self.faker.sentence()
-        storage_path = '/tmp/rireki_testing/storage'
+        store_path = '/tmp/rireki_testing/store'
         project = self._create_project(
             driver='custom',
             driver_config={'command': 'echo "%s"' % command_output},
-            storage='local',
-            storage_config={'path': storage_path},
+            store='local',
+            store_config={'path': store_path},
         )
 
         set_testing_now(time)
@@ -58,7 +58,7 @@ class TestBackup(TestCase):
         assert 'Done' in result.output
 
         backup_path = os.path.join(
-            storage_path,
+            store_path,
             '{}-backup-{}-{}'.format(project.slug, format_time(time, 'date'), time),
             'logs.json',
         )

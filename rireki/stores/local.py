@@ -1,31 +1,31 @@
 import click
 import os
 
-from rireki.core.storage import Storage
+from rireki.core.store import Store
 from rireki.utils.file_helpers import file_get_name
 from shutil import copyfile
 
 
-class Local(Storage):
+class Local(Store):
     NAME = 'local'
 
     def __init__(self):
-        Storage.__init__(self)
+        Store.__init__(self)
 
         self.path = None
 
     def ask_config(self):
-        Storage.ask_config(self)
+        Store.ask_config(self)
 
         self.path = self.__ask_path()
 
     def load_config(self, config):
-        Storage.load_config(self, config)
+        Store.load_config(self, config)
 
         self.path = config['path']
 
     def get_config(self):
-        config = Storage.get_config(self)
+        config = Store.get_config(self)
 
         config['path'] = self.path
 

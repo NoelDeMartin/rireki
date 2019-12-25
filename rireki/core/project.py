@@ -3,10 +3,10 @@ from rireki.utils.string_helpers import str_slug
 
 class Project(object):
 
-    def __init__(self, name, driver, storage):
+    def __init__(self, name, driver, store):
         self.name = name
         self.driver = driver
-        self.storage = storage
+        self.store = store
 
     @property
     def slug(self):
@@ -21,10 +21,10 @@ class Project(object):
         return self.driver.has_pending_backups(last_backup.time)
 
     def get_backups(self):
-        return self.storage.get_backups()
+        return self.store.get_backups()
 
     def get_last_backup(self):
-        return self.storage.get_last_backup()
+        return self.store.get_last_backup()
 
     def perform_backup(self):
         self.driver.perform_backup()

@@ -2,7 +2,7 @@ import os
 
 from rireki.core.project import Project
 from rireki.drivers.files import Files
-from rireki.storages.local import Local
+from rireki.stores.local import Local
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch
 from rireki.utils.string_helpers import str_slug
@@ -15,19 +15,19 @@ class TestFiles(TestCase):
         TestCase.setUp(self)
 
         self.driver = Files()
-        self.storage = Local()
-        self.project = Project(self.faker.name(), self.driver, self.storage)
+        self.store = Local()
+        self.project = Project(self.faker.name(), self.driver, self.store)
 
         self.driver.project = self.project
-        self.storage.project = self.project
+        self.store.project = self.project
 
     def test_creates_backups_with_one_path(self):
         # Prepare
         tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
-        storage_path = os.path.join(tmp_path, 'backups')
+        store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [os.path.join(tmp_path, 'files')]
 
-        self.storage.load_config({'path': storage_path})
+        self.store.load_config({'path': store_path})
         self.driver.load_config({
             'frequency': 42,
             'paths': driver_paths,
@@ -39,23 +39,23 @@ class TestFiles(TestCase):
         self.driver.perform_backup()
 
         # Assert
-        assert os.path.exists(storage_path)
+        assert os.path.exists(store_path)
 
-        backup = self.storage.get_last_backup()
+        backup = self.store.get_last_backup()
         assert backup is not None
 
-        assert os.path.exists(os.path.join(storage_path, backup.name + '.zip'))
+        assert os.path.exists(os.path.join(store_path, backup.name + '.zip'))
 
     def test_creates_backups_with_multiple_paths(self):
         # Prepare
         tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
-        storage_path = os.path.join(tmp_path, 'backups')
+        store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [
             os.path.join(tmp_path, 'files-1'),
             os.path.join(tmp_path, 'files-2'),
         ]
 
-        self.storage.load_config({'path': storage_path})
+        self.store.load_config({'path': store_path})
         self.driver.load_config({
             'frequency': 42,
             'paths': driver_paths,
@@ -68,9 +68,9 @@ class TestFiles(TestCase):
         self.driver.perform_backup()
 
         # Assert
-        assert os.path.exists(storage_path)
+        assert os.path.exists(store_path)
 
-        backup = self.storage.get_last_backup()
+        backup = self.store.get_last_backup()
         assert backup is not None
 
-        assert os.path.exists(os.path.join(storage_path, backup.name + '.zip'))
+        assert os.path.exists(os.path.join(store_path, backup.name + '.zip'))

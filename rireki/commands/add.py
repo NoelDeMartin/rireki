@@ -3,14 +3,14 @@ import click
 from rireki.core.project import Project
 from rireki.core.projects_manager import ProjectsManager
 from rireki.drivers.index import drivers
-from rireki.storages.index import storages
+from rireki.stores.index import stores
 
 
 @click.command()
 @click.argument('name')
 @click.option('--driver', type=click.Choice(drivers.keys()), help='Backups driver')
-@click.option('--storage', type=click.Choice(storages.keys()), help='Backups storage')
-def add(name, driver=None, storage=None):
+@click.option('--store', type=click.Choice(stores.keys()), help='Backups store')
+def add(name, driver=None, store=None):
     """Install a new project"""
 
     if ProjectsManager.project_exists(name):
@@ -18,9 +18,9 @@ def add(name, driver=None, storage=None):
         return
 
     driver = __resolve_driver(driver)
-    storage = __resolve_storage(storage)
+    store = __resolve_store(store)
 
-    __add_new_project(name, driver, storage)
+    __add_new_project(name, driver, store)
 
 
 def __resolve_driver(driver):
@@ -33,20 +33,20 @@ def __resolve_driver(driver):
     )
 
 
-def __resolve_storage(storage):
-    if storage:
-        return storage
+def __resolve_store(store):
+    if store:
+        return store
 
     return click.prompt(
-        'Which storage would you like to use to persist this project?',
-        type=click.Choice(storages.keys()),
+        'Which store would you like to use to persist this project?',
+        type=click.Choice(stores.keys()),
     )
 
 
-def __add_new_project(project_name, driver_name, storage_name):
+def __add_new_project(project_name, driver_name, store_name):
     driver = __create_driver(driver_name)
-    storage = __create_storage(storage_name)
-    project = __create_project(project_name, driver, storage)
+    store = __create_store(store_name)
+    project = __create_project(project_name, driver, store)
 
     ProjectsManager.install_project(project)
 
@@ -61,13 +61,13 @@ def __create_driver(name):
     return driver
 
 
-def __create_storage(name):
-    storage = storages[name]()
+def __create_store(name):
+    store = stores[name]()
 
-    storage.ask_config()
+    store.ask_config()
 
-    return storage
+    return store
 
 
-def __create_project(name, driver, storage):
-    return Project(name, driver, storage)
+def __create_project(name, driver, store):
+    return Project(name, driver, store)

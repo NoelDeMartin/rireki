@@ -1,4 +1,4 @@
-from rireki.storages.aws import AmazonWebServices
+from rireki.stores.aws import AmazonWebServices
 
 
 class DigitalOcean(AmazonWebServices):

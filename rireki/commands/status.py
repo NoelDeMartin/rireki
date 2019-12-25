@@ -51,7 +51,7 @@ def __display_projects_status(projects):
         return
 
     display_table(
-        ('Name', 'Driver', 'Storage', 'Status'),
+        ('Name', 'Driver', 'Store', 'Status'),
         array_map(__get_project_info, projects),
     )
 
@@ -72,6 +72,6 @@ def __get_project_info(project):
     return (
         project.name,
         project.driver.name,
-        project.storage.name,
+        project.store.name,
         status,
     )

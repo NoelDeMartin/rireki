@@ -21,7 +21,7 @@ class TestStatus(TestCase):
 
     def test_with_one_project_with_backups_pending(self):
         # Prepare
-        project = self._create_project(driver='files', storage='local')
+        project = self._create_project(driver='files', store='local')
 
         # Execute
         result = Cli.run('status')
@@ -39,11 +39,11 @@ class TestStatus(TestCase):
     def test_with_one_project_backed_up(self):
         # Prepare
         project = self._create_project(
-            storage='local',
-            storage_config={'path': '/tmp/rireki_testing/storage'},
+            store='local',
+            store_config={'path': '/tmp/rireki_testing/store'},
         )
 
-        touch('/tmp/rireki_testing/storage/%s/backup' % now())
+        touch('/tmp/rireki_testing/store/%s/backup' % now())
 
         # Execute
         result = Cli.run('status')

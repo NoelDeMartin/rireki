@@ -27,7 +27,7 @@ class TestCustom(TestCase):
             self.driver.perform_backup()
 
         # Assert
-        self.driver.project.storage.create_backup.assert_not_called()
+        self.driver.project.store.create_backup.assert_not_called()
 
     def test_error(self):
         # Prepare
@@ -42,4 +42,4 @@ class TestCustom(TestCase):
             self.driver.perform_backup()
 
         # Assert
-        self.driver.project.storage.create_backup.assert_not_called()
+        self.driver.project.store.create_backup.assert_not_called()

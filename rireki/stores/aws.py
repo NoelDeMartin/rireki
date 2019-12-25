@@ -4,15 +4,15 @@ import os
 import re
 
 from functools import reduce
-from rireki.core.storage import Storage
+from rireki.core.store import Store
 from rireki.utils.file_helpers import file_get_name
 
 
-class AmazonWebServices(Storage):
+class AmazonWebServices(Store):
     NAME = 'aws'
 
     def __init__(self):
-        Storage.__init__(self)
+        Store.__init__(self)
 
         self.region = None
         self.access_key = None
@@ -21,7 +21,7 @@ class AmazonWebServices(Storage):
         self.path = None
 
     def ask_config(self):
-        Storage.ask_config(self)
+        Store.ask_config(self)
 
         click.echo('Please, introduce credentials for %s.' % self._get_service_name())
 
@@ -32,7 +32,7 @@ class AmazonWebServices(Storage):
         self.path = self.__ask_path()
 
     def load_config(self, config):
-        Storage.load_config(self, config)
+        Store.load_config(self, config)
 
         self.region = config['region']
         self.access_key = config['access_key']
@@ -41,7 +41,7 @@ class AmazonWebServices(Storage):
         self.path = config['path']
 
     def get_config(self):
-        config = Storage.get_config(self)
+        config = Store.get_config(self)
 
         config['region'] = self.region
         config['access_key'] = self.access_key

@@ -7,7 +7,7 @@ from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now
 
 
-class Storage(Configurable):
+class Store(Configurable):
 
     def __init__(self):
         Configurable.__init__(self)
@@ -47,7 +47,7 @@ class Storage(Configurable):
         return [Backup(name) for name in names if Backup.is_backup_name(name)]
 
     def _get_backup_names(self):
-        raise Exception('%s storage must implement _get_backup_names method' % self.name)
+        raise Exception('%s store must implement _get_backup_names method' % self.name)
 
     def _upload_file(self, source, destination):
-        raise Exception('%s storage must implement _upload_file method' % self.name)
+        raise Exception('%s store must implement _upload_file method' % self.name)

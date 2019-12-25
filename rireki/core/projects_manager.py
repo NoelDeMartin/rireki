@@ -4,7 +4,7 @@ import toml
 from rireki.core.config import Config
 from rireki.core.project import Project
 from rireki.drivers.index import drivers
-from rireki.storages.index import storages
+from rireki.stores.index import stores
 
 
 class ProjectsManager():
@@ -36,7 +36,7 @@ class ProjectsManager():
             config = {'name': project.name}
 
             config['driver'] = project.driver.get_config()
-            config['storage'] = project.storage.get_config()
+            config['store'] = project.store.get_config()
 
             config_file.write(toml.dumps(config))
 
@@ -46,13 +46,13 @@ class ProjectsManager():
 
         name = config['name']
         driver = drivers[config['driver']['name']]()
-        storage = storages[config['storage']['name']]()
-        project = Project(name, driver, storage)
+        store = stores[config['store']['name']]()
+        project = Project(name, driver, store)
 
         driver.project = project
         driver.load_config(config['driver'])
 
-        storage.project = project
-        storage.load_config(config['storage'])
+        store.project = project
+        store.load_config(config['store'])
 
         return project

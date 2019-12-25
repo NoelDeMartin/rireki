@@ -6,7 +6,7 @@ import unittest
 from faker import Faker
 from rireki.core.project import Project
 from rireki.drivers.index import drivers
-from rireki.storages.index import storages
+from rireki.stores.index import stores
 from rireki.testing.cli import Cli
 
 
@@ -26,10 +26,10 @@ class TestCase(unittest.TestCase):
         if os.path.exists(self.home_path):
             shutil.rmtree(self.home_path)
 
-    def _create_project(self, name=None, driver=None, driver_config={}, storage=None, storage_config={}):
+    def _create_project(self, name=None, driver=None, driver_config={}, store=None, store_config={}):
         name = name or self.faker.name()
         driver_config = self.__create_driver_config(driver, driver_config)
-        storage_config = self.__create_storage_config(storage, storage_config)
+        store_config = self.__create_store_config(store, store_config)
 
         if not os.path.exists('%s/projects' % self.home_path):
             os.makedirs('%s/projects' % self.home_path)
@@ -38,7 +38,7 @@ class TestCase(unittest.TestCase):
             config = {
                 'name': name,
                 'driver': driver_config,
-                'storage': storage_config,
+                'store': store_config,
             }
 
             config_file.write(toml.dumps(config))
@@ -46,7 +46,7 @@ class TestCase(unittest.TestCase):
         return Project(
             name,
             self.__create_driver(driver_config),
-            self.__create_storage(storage_config),
+            self.__create_store(store_config),
         )
 
     def __create_driver(self, config):
@@ -69,18 +69,18 @@ class TestCase(unittest.TestCase):
 
         return config
 
-    def __create_storage(self, config):
-        storage = storages[config['name']]()
+    def __create_store(self, config):
+        store = stores[config['name']]()
 
-        storage.load_config(config)
+        store.load_config(config)
 
-        return storage
+        return store
 
-    def __create_storage_config(self, name=None, config={}):
+    def __create_store_config(self, name=None, config={}):
         name = name or 'local'
         config['name'] = name
 
         if name == 'local':
-            config['path'] = config.get('path') or '/tmp/rireki_testing/storage'
+            config['path'] = config.get('path') or '/tmp/rireki_testing/store'
 
         return config

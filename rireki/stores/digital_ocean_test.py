@@ -2,7 +2,7 @@ import os
 
 from mock import patch, Mock, ANY
 from rireki.core.project import Project
-from rireki.storages.digital_ocean import DigitalOcean
+from rireki.stores.digital_ocean import DigitalOcean
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch
 from rireki.utils.string_helpers import str_slug
@@ -14,10 +14,10 @@ class TestDigitalOcean(TestCase):
     def setUp(self):
         TestCase.setUp(self)
 
-        self.storage = DigitalOcean()
-        self.project = Project(self.faker.name(), None, self.storage)
+        self.store = DigitalOcean()
+        self.project = Project(self.faker.name(), None, self.store)
 
-        self.storage.project = self.project
+        self.store.project = self.project
 
     @patch('boto3.client')
     def test_get_files(self, client):
@@ -28,7 +28,7 @@ class TestDigitalOcean(TestCase):
         bucket = self.faker.word()
         path = str_slug(self.faker.word())
 
-        self.storage.load_config({
+        self.store.load_config({
             'region': region,
             'access_key': access_key,
             'access_secret': access_secret,
@@ -49,7 +49,7 @@ class TestDigitalOcean(TestCase):
         ]
 
         # Execute
-        backup = self.storage.get_last_backup()
+        backup = self.store.get_last_backup()
 
         # Assert
         assert backup is not None
@@ -77,7 +77,7 @@ class TestDigitalOcean(TestCase):
         placeholder_file_name = str_slug(self.faker.word())
         placeholder_file_path = os.path.join(tmp_path, placeholder_file_name)
 
-        self.storage.load_config({
+        self.store.load_config({
             'region': region,
             'access_key': access_key,
             'access_secret': access_secret,
@@ -91,7 +91,7 @@ class TestDigitalOcean(TestCase):
         client.return_value = mock_client
 
         # Execute
-        self.storage.create_backup(tmp_path)
+        self.store.create_backup(tmp_path)
 
         # Assert
         client.assert_called_once_with(

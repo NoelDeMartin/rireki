@@ -27,7 +27,7 @@ class TestAdd(TestCase):
         result = Cli.run(
             'add', project_name,
             '--driver=custom',
-            '--storage=local',
+            '--store=local',
             input=('daily', '-', '/tmp'),
         )
 
@@ -57,7 +57,7 @@ class TestAdd(TestCase):
         result = Cli.run(
             'add', project_name,
             '--driver=' + driver_name,
-            '--storage=local',
+            '--store=local',
             input=self.__get_new_project_with_files_driver_input(
                 driver_frequency_name,
                 driver_paths,
@@ -86,7 +86,7 @@ class TestAdd(TestCase):
         result = Cli.run(
             'add', project_name,
             '--driver=' + driver_name,
-            '--storage=local',
+            '--store=local',
             input=(driver_frequency_name, str(driver_frequency_minutes), driver_command, '/tmp'),
         )
 
@@ -100,18 +100,18 @@ class TestAdd(TestCase):
         assert config['driver']['frequency'] == driver_frequency_minutes
         assert config['driver']['command'] == driver_command
 
-    def test_new_project_with_local_storage(self):
+    def test_new_project_with_local_store(self):
         # Prepare
         project_name = self.faker.name()
-        storage_name = 'local'
-        storage_path = '/tmp'
+        store_name = 'local'
+        store_path = '/tmp'
 
         # Execute
         result = Cli.run(
             'add', project_name,
             '--driver=custom',
-            '--storage=' + storage_name,
-            input=('daily', '-', storage_path),
+            '--store=' + store_name,
+            input=('daily', '-', store_path),
         )
 
         # Assert
@@ -119,9 +119,9 @@ class TestAdd(TestCase):
 
         config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
 
-        assert 'storage' in config
-        assert config['storage']['name'] == storage_name
-        assert config['storage']['path'] == storage_path
+        assert 'store' in config
+        assert config['store']['name'] == store_name
+        assert config['store']['path'] == store_path
 
     def __get_new_project_with_files_driver_input(self, driver_frequency_name, driver_paths):
         input = []
@@ -140,7 +140,7 @@ class TestAdd(TestCase):
         # Driver paths - No, no more paths
         input.append('N')
 
-        # Storage path
+        # store path
         input.append('/tmp')
 
         return input
