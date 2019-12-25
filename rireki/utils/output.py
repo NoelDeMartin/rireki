@@ -43,7 +43,7 @@ def __fit_row_column_widths(columns_content, column_widths):
 
 
 def __format_time_interval(time):
-    seconds = time
+    seconds = float(time)
     if seconds <= 60:
         return __format_time_unit(seconds, 'second')
 
