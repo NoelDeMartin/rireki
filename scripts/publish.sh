@@ -4,6 +4,8 @@
 set -e
 
 # build
+rm build -rf
+rm dist -rf
 python setup.py sdist bdist_wheel
 
 # upload to test repository
