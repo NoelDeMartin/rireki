@@ -50,7 +50,10 @@ def __display_projects_status(projects):
         click.echo('No projects installed!')
         return
 
-    display_table(('Name', 'Driver', 'Status'), array_map(__get_project_info, projects))
+    display_table(
+        ('Name', 'Driver', 'Storage', 'Status'),
+        array_map(__get_project_info, projects),
+    )
 
 
 def __get_project_info(project):
@@ -69,5 +72,6 @@ def __get_project_info(project):
     return (
         project.name,
         project.driver.name,
+        project.storage.name,
         status,
     )

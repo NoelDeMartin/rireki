@@ -5,7 +5,7 @@ from rireki.utils.array_helpers import array_map
 from rireki.utils.string_helpers import str_pad
 
 
-def display_table(headers, rows, min_column_width=10):
+def display_table(headers, rows, min_column_width=14):
     headers = array_map(lambda h: h.upper(), headers)
 
     column_widths = __calculate_column_widths(headers, rows, min_column_width)

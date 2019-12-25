@@ -21,7 +21,7 @@ class TestStatus(TestCase):
 
     def test_with_one_project_with_backups_pending(self):
         # Prepare
-        project = self._create_project(driver='files')
+        project = self._create_project(driver='files', storage='local')
 
         # Execute
         result = Cli.run('status')
@@ -33,6 +33,7 @@ class TestStatus(TestCase):
         assert len(output_lines) == 2
         assert project.name in output_lines[1]
         assert 'files' in output_lines[1]
+        assert 'local' in output_lines[1]
         assert 'backup-pending' in output_lines[1]
 
     def test_with_one_project_backed_up(self):
