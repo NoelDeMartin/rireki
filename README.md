@@ -16,6 +16,8 @@ You need to call `rireki backup` in order for backups to be performed. For examp
 0 * * * * rireki backup >> /var/log/rireki/cron.log 2>> /var/log/rireki/cron-error.log
 ```
 
+**Note:** Make sure that the crontab can execute the `rireki` command. That will depend on how you installed the package and which crontab you configure. Also keep in mind that by default the command will read the projects from the home folder of the current user. This can be overriden by setting the `RIREKI_HOME` environment variable.
+
 ## Usage
 
 Get detailed information running `rireki --help`.
