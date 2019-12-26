@@ -1,6 +1,6 @@
 # Rireki [![Github Actions Status](https://github.com/noeldemartin/rireki/workflows/Testing/badge.svg)](https://github.com/noeldemartin/rireki/actions)
 
-CLI backup tool.
+CLI backup tool. Schedule backups and keep your precious data safe.
 
 ## Installation
 
