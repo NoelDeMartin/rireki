@@ -49,6 +49,6 @@ def __process_backup(project, force):
     try:
         project.perform_backup()
     except Exception as e:
-        error_message = click.style('Error: %s' % e.message, fg='red')
+        error_message = click.style('Error: %s' % e, fg='red')
 
         click.echo(error_message, err=True)

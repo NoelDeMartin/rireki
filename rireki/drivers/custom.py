@@ -65,7 +65,7 @@ class Custom(Driver):
         thread = Thread(target=target)
 
         thread.start()
-        thread.join(1)
+        thread.join(self.timeout)
         self.process.poll()
 
         if thread.isAlive() or self.process.returncode is None:
