@@ -66,6 +66,53 @@ class TestDigitalOcean(TestCase):
         mock_paginator.paginate.assert_called_once_with(Bucket=bucket, Prefix=path)
 
     @patch('boto3.client')
+    def test_get_folders(self, client):
+        # Prepare
+        region = self.faker.word()
+        access_key = self.faker.sentence()
+        access_secret = self.faker.sentence()
+        bucket = self.faker.word()
+        path = str_slug(self.faker.word())
+
+        self.store.load_config({
+            'region': region,
+            'access_key': access_key,
+            'access_secret': access_secret,
+            'bucket': bucket,
+            'path': path,
+        })
+
+        mock_client = Mock()
+        mock_paginator = Mock()
+        client.return_value = mock_client
+        mock_client.get_paginator.return_value = mock_paginator
+        mock_paginator.paginate.return_value = [
+            {
+                'Contents': [
+                    {'Key': os.path.join(path, str(now()), 'backup.tar.gz')},
+                    {'Key': os.path.join(path, str(now()), 'logs.json')},
+                ],
+            },
+        ]
+
+        # Execute
+        backup = self.store.get_last_backup()
+
+        # Assert
+        assert backup is not None
+
+        client.assert_called_once_with(
+            's3',
+            region_name=region,
+            endpoint_url='https://%s.digitaloceanspaces.com' % region,
+            aws_access_key_id=access_key,
+            aws_secret_access_key=access_secret,
+        )
+
+        mock_client.get_paginator.assert_called_once_with('list_objects')
+        mock_paginator.paginate.assert_called_once_with(Bucket=bucket, Prefix=path)
+
+    @patch('boto3.client')
     def test_upload_files(self, client):
         # Prepare
         region = self.faker.word()

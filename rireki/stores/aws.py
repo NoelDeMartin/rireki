@@ -56,12 +56,12 @@ class AmazonWebServices(Store):
         paginator = client.get_paginator('list_objects')
         page_iterator = paginator.paginate(Bucket=self.bucket, Prefix=self.path)
 
-        files = reduce(
+        names = reduce(
             sum,
-            [self.__parse_page_files(self.path, page) for page in page_iterator],
+            [self.__parse_page_backups(self.path, page) for page in page_iterator],
         )
 
-        return sorted([file_get_name(file) for file in files], reverse=True)
+        return sorted(names, reverse=True)
 
     def _upload_file(self, source, destination):
         client = self.__create_s3_client()
@@ -102,8 +102,8 @@ class AmazonWebServices(Store):
             aws_secret_access_key=self.access_secret,
         )
 
-    def __parse_page_files(self, path, page):
-        backup_names = []
+    def __parse_page_backups(self, path, page):
+        backup_names = set()
 
         if 'Contents' not in page:
             return backup_names
@@ -111,12 +111,12 @@ class AmazonWebServices(Store):
         if not path.endswith('/'):
             path += '/'
 
-        regex = '%s([^\\/]+)\\/?$' % path.replace('/', '\\/')
+        regex = '%s([^\\/.]+).*$' % path.replace('/', '\\/')
 
         for item in page['Contents']:
             match = re.match(regex, item['Key'])
 
             if match:
-                backup_names.append(match.group(1))
+                backup_names.add(match.group(1))
 
-        return backup_names
+        return list(backup_names)
