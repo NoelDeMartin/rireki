@@ -19,7 +19,7 @@ class TestCustom(TestCase):
         self.driver.load_config({
             'frequency': 42,
             'command': 'while true; do echo; done',
-            'timeout': 0,
+            'timeout': 1,
         })
 
         # Execute
@@ -34,7 +34,7 @@ class TestCustom(TestCase):
         self.driver.load_config({
             'frequency': 42,
             'command': 'exit 1',
-            'timeout': 60,
+            'timeout': 1,
         })
 
         # Execute
