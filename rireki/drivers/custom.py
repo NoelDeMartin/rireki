@@ -74,6 +74,11 @@ class Custom(Driver):
             self.process.poll()
 
         if self.process.returncode != 0:
-            raise Exception('Command failed with return code %s' % self.process.returncode)
+            raise Exception(
+                'Command failed with return code %s\n\nstdout:\n%s\nstderr:\n%s' %
+                (self.process.returncode,
+                self.logs['stdout'],
+                self.logs['stderr'])
+            )
 
         return self.logs
