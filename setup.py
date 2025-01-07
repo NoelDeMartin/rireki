@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='rireki',
-    version='0.0.4',
+    version='0.1.0',
     author='Noel De Martin',
     author_email='noeldemartin@gmail.com',
     description='CLI backup tool.',
