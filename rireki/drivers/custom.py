@@ -68,7 +68,7 @@ class Custom(Driver):
         thread.join(self.timeout)
         self.process.poll()
 
-        if thread.isAlive() or self.process.returncode is None:
+        if thread.is_alive() or self.process.returncode is None:
             self.process.terminate()
             thread.join()
             self.process.poll()
