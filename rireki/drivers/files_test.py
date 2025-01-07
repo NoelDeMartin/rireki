@@ -74,3 +74,29 @@ class TestFiles(TestCase):
         assert backup is not None
 
         assert os.path.exists(os.path.join(store_path, backup.name + '.zip'))
+
+    def test_creates_backups_with_files(self):
+        # Prepare
+        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        file_name = str_slug(self.faker.word())
+        store_path = os.path.join(tmp_path, 'backups')
+        driver_paths = [os.path.join(tmp_path, 'files', file_name)]
+
+        self.store.load_config({'path': store_path})
+        self.driver.load_config({
+            'frequency': 42,
+            'paths': driver_paths,
+        })
+
+        touch(driver_paths[0])
+
+        # Execute
+        self.driver.perform_backup()
+
+        # Assert
+        assert os.path.exists(store_path)
+
+        backup = self.store.get_last_backup()
+        assert backup is not None
+
+        assert os.path.exists(os.path.join(store_path, backup.name + '.zip'))

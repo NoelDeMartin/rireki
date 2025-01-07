@@ -84,7 +84,10 @@ class TemporaryBackupFolder():
         os.makedirs(self.path)
 
         for path in self.driver.paths:
-            shutil.copytree(path, os.path.join(self.path, os.path.basename(path)))
+            if os.path.isdir(path):
+                shutil.copytree(path, os.path.join(self.path, os.path.basename(path)))
+            else:
+                shutil.copy2(path, os.path.join(self.path, os.path.basename(path)))
 
         return self
 
