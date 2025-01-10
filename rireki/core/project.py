@@ -60,8 +60,8 @@ class Project(Configurable):
     def get_last_backup(self):
         return self.store.get_last_backup()
 
-    def get_stale_backups(self):
-        backups = sorted(self.get_backups(), key=lambda x: x.time, reverse=True)
+    def get_stale_backups(self, backups=None):
+        backups = sorted(backups or self.get_backups(), key=lambda x: x.time, reverse=True)
         year_retention = self.year_backups_retention
         ancient_retention = self.ancient_backups_retention
         retained_backups = []

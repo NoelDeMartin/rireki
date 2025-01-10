@@ -37,7 +37,7 @@ def __calculate_column_widths(headers, rows, min_column_width):
 
 def __fit_row_column_widths(columns_content, column_widths):
     for index, content in enumerate(columns_content):
-        column_widths[index] = max(column_widths[index], len(content))
+        column_widths[index] = max(column_widths[index], len(content) + 2)
 
     return column_widths
 

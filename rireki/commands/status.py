@@ -37,12 +37,18 @@ def __display_project_status(project):
         )
 
     backups = project.get_backups()
+    stale_backups = project.get_stale_backups(backups)
 
     click.echo('')
-    click.echo('All backups (%s):' % len(backups))
+    click.echo('All backups (%s total, %s stale):' % (len(backups), len(stale_backups)))
 
     for backup in backups:
-        click.echo('- %s ago' % format_time(now() - backup.time, 'interval'))
+        click.echo(
+            '- %s ago%s' % (
+                format_time(now() - backup.time, 'interval'),
+                ' (stale)' if backup in stale_backups else '',
+            ),
+        )
 
 
 def __display_projects_status(projects):
@@ -51,7 +57,7 @@ def __display_projects_status(projects):
         return
 
     display_table(
-        ('Name', 'Driver', 'Store', 'Status'),
+        ('Name', 'Driver', 'Store', 'Status', 'Stale Backups'),
         array_map(__get_project_info, projects),
     )
 
@@ -69,9 +75,16 @@ def __get_project_info(project):
             'color': 'green',
         }
 
+    stale_backups = len(project.get_stale_backups())
+    stale_backups_status = {
+        'text': str(stale_backups),
+        'color': 'red' if stale_backups > 0 else 'green',
+    }
+
     return (
         project.name,
         project.driver.name,
         project.store.name,
         status,
+        stale_backups_status,
     )
