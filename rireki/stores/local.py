@@ -3,7 +3,7 @@ import os
 
 from rireki.core.store import Store
 from rireki.utils.file_helpers import file_get_name
-from shutil import copyfile
+from shutil import copyfile, rmtree
 
 
 class Local(Store):
@@ -30,6 +30,9 @@ class Local(Store):
         config['path'] = self.path
 
         return config
+
+    def remove_backup(self, backup):
+        rmtree(os.path.join(self.path, backup.name))
 
     def _get_backup_names(self):
         if not os.path.exists(self.path):

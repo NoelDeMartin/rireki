@@ -33,26 +33,16 @@ class ProjectsManager():
             os.makedirs(Config.projects_path)
 
         with open('%s/%s.conf' % (Config.projects_path, project.name), 'w') as config_file:
-            config = {'name': project.name}
-
-            config['driver'] = project.driver.get_config()
-            config['store'] = project.store.get_config()
-
-            config_file.write(toml.dumps(config))
+            config_file.write(toml.dumps(project.get_config()))
 
     @classmethod
     def __parse_project_config(cls, project_name):
         config = toml.load('%s/%s.conf' % (Config.projects_path, project_name))
 
-        name = config['name']
         driver = drivers[config['driver']['name']]()
         store = stores[config['store']['name']]()
-        project = Project(name, driver, store)
+        project = Project(config['name'], driver, store)
 
-        driver.project = project
-        driver.load_config(config['driver'])
-
-        store.project = project
-        store.load_config(config['store'])
+        project.load_config(config)
 
         return project

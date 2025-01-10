@@ -33,6 +33,9 @@ class Store(Configurable):
                     os.path.join(backup_name, file),
                 )
 
+    def remove_backup(self, backup):
+        raise Exception('%s store must implement remove_backup method' % self.name)
+
     def get_last_backup(self):
         backups = self.get_backups()
 

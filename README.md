@@ -10,10 +10,11 @@ Install the rireki cli running the following command:
 pip install rireki
 ```
 
-You need to call `rireki backup` in order for backups to be performed. For example, you could use the following crontab configuration to perform backup checks every hour:
+You need to call `rireki backup` in order for backups to be performed, and `rireki clean` to perform clean up. For example, you could use the following crontab configuration to perform backup checks every hour:
 
 ```sh
 0 * * * * rireki backup >> /var/log/cron-rireki.log 2>> /var/log/cron-rireki.log
+0 7 * * * rireki clean >> /var/log/cron-rireki.log 2>> /var/log/cron-rireki.log
 ```
 
 **Note:** Make sure that the crontab can execute the `rireki` command. That will depend on how you installed the package and which crontab you configure. Also keep in mind that by default the command will read the projects from the home folder of the current user. This can be overriden by setting the `RIREKI_HOME` environment variable. Also make sure that the `/var/log/cron-rireki.log` file exists and is writable by the crontab user.
@@ -31,6 +32,15 @@ There are three core concepts on how rireki manages backups:
 - **Stores:** A store is the program used to save the backup files created with a driver. For example copying them to a local folder or uploading them to a 3rd party service.
 
 In order to install a new project to backup, a configuration file can be added to `~/.rireki/projects/{project-name}.conf`. This will be a [toml](https://github.com/toml-lang/toml) configuration file. It can either be created manually or calling `rireki add {project-name}`.
+
+Additionally, projects can have the following configurations:
+
+| property                  | type                                       | description  |
+| ------------------------- |--------------------------------------------| -------------|
+| name                      | `string`                                   | Name of the project. |
+| last_backups_retention    | `integer`                                  | Number of newest backups to retain on cleanup (defaults to 7). |
+| year_backups_retention    | `"monthly" | "weekly" | "none"`            | Frequency of backups newer than a year to retain on cleanup (defaults to `monthly`). |
+| ancient_backups_retention | `"yearly" | "monthly" | "weekly" | "none"` | Frequency of backups older than a year to retain on cleanup (defaults to `yearly`). |
 
 ### Drivers
 
@@ -82,7 +92,7 @@ It needs the following configuration:
 
 | property      | type          | description  |
 | ------------- |---------------| -------------|
-| name          | `"aws"`     | The name of the store. |
+| name          | `"aws"`       | The name of the store. |
 | region        | `string`      | The region where the S3 instance is located. |
 | access_key    | `string`      | The access key ID. |
 | access_secret | `string`      | The secret access key. |

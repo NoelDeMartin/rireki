@@ -1,7 +1,7 @@
 class Configurable():
 
-    def __init__(self):
-        self.name = self.NAME
+    def __init__(self, name=None):
+        self.name = name or self.NAME
 
     def ask_config(self):
         pass

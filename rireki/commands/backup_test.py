@@ -34,6 +34,7 @@ class TestBackup(TestCase):
         assert result.exit_code == 0
         assert ('Project "%s" does not have any pending backups' % project.name) in result.output
         assert 'Done' in result.output
+        assert 'Error' not in result.output
 
     def test_with_custom_driver(self):
         # Prepare
@@ -56,6 +57,7 @@ class TestBackup(TestCase):
         assert result.exit_code == 0
         assert ('Backing up %s...' % project.name) in result.output
         assert 'Done' in result.output
+        assert 'Error' not in result.output
 
         backup_path = os.path.join(
             store_path,

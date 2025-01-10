@@ -1,6 +1,8 @@
 from time import time
 
 testing_now = None
+DAY_SECONDS = 60 * 60
+YEAR_SECONDS = 365 * 24 * DAY_SECONDS
 
 
 def now():

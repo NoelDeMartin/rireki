@@ -22,11 +22,10 @@ class TestCase(unittest.TestCase):
         Cli.reset()
         Cli.set_environment_variable('RIREKI_HOME', self.home_path)
 
-    def tearDown(self):
         if os.path.exists(self.home_path):
             shutil.rmtree(self.home_path)
 
-    def _create_project(self, name=None, driver=None, driver_config={}, store=None, store_config={}):
+    def _create_project(self, name=None, retention={}, driver=None, driver_config={}, store=None, store_config={}):
         name = name or self.faker.name()
         driver_config = self.__create_driver_config(driver, driver_config)
         store_config = self.__create_store_config(store, store_config)
@@ -40,6 +39,15 @@ class TestCase(unittest.TestCase):
                 'driver': driver_config,
                 'store': store_config,
             }
+
+            if 'last_backups_retention' in retention:
+                config['last_backups_retention'] = retention['last_backups_retention']
+
+            if 'year_backups_retention' in retention:
+                config['year_backups_retention'] = retention['year_backups_retention']
+
+            if 'ancient_backups_retention' in retention:
+                config['ancient_backups_retention'] = retention['ancient_backups_retention']
 
             config_file.write(toml.dumps(config))
 
