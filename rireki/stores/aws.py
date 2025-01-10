@@ -5,7 +5,6 @@ import re
 
 from functools import reduce
 from rireki.core.store import Store
-from rireki.utils.file_helpers import file_get_name
 
 
 class AmazonWebServices(Store):
