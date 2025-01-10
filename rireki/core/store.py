@@ -45,12 +45,12 @@ class Store(Configurable):
         return backups[0]
 
     def get_backups(self):
-        names = self._get_backup_names()
+        filenames = self._get_backup_filenames()
 
-        return [Backup(name) for name in names if Backup.is_backup_name(name)]
+        return [Backup(filename) for filename in filenames if Backup.is_backup_filename(filename)]
 
-    def _get_backup_names(self):
-        raise Exception('%s store must implement _get_backup_names method' % self.name)
+    def _get_backup_filenames(self):
+        raise Exception('%s store must implement _get_backup_filenames method' % self.name)
 
     def _upload_file(self, source, destination):
         raise Exception('%s store must implement _upload_file method' % self.name)

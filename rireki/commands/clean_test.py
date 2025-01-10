@@ -32,7 +32,7 @@ class TestBackup(TestCase):
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
-    def test_with_stale_backups(self):
+    def test_with_stale_directory_backups(self):
         # Prepare
         project = self._create_project(
             store='local',
@@ -44,9 +44,9 @@ class TestBackup(TestCase):
         yesterday = today - DAY_SECONDS
         last_month = today - YEAR_SECONDS
 
-        touch('/tmp/rireki_testing/store/%s/backup' % today)
-        touch('/tmp/rireki_testing/store/%s/backup' % yesterday)
-        touch('/tmp/rireki_testing/store/%s/backup' % last_month)
+        touch('/tmp/rireki_testing/store/%s' % today)
+        touch('/tmp/rireki_testing/store/%s' % yesterday)
+        touch('/tmp/rireki_testing/store/%s' % last_month)
 
         # Execute
         result = Cli.run('clean')
@@ -58,6 +58,37 @@ class TestBackup(TestCase):
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
-        assert os.path.exists('/tmp/rireki_testing/store/%s/backup' % today)
-        assert not os.path.exists('/tmp/rireki_testing/store/%s/backup' % yesterday)
-        assert os.path.exists('/tmp/rireki_testing/store/%s/backup' % last_month)
+        assert os.path.exists('/tmp/rireki_testing/store/%s' % today)
+        assert not os.path.exists('/tmp/rireki_testing/store/%s' % yesterday)
+        assert os.path.exists('/tmp/rireki_testing/store/%s' % last_month)
+
+    def test_with_stale_file_backups(self):
+        # Prepare
+        project = self._create_project(
+            store='local',
+            store_config={'path': '/tmp/rireki_testing/store'},
+            driver='files',
+            retention={'last_backups_retention': 1, 'year_backups_retention': 'monthly'},
+        )
+
+        today = now()
+        yesterday = today - DAY_SECONDS
+        last_month = today - YEAR_SECONDS
+
+        touch('/tmp/rireki_testing/store/%s.zip' % today)
+        touch('/tmp/rireki_testing/store/%s.zip' % yesterday)
+        touch('/tmp/rireki_testing/store/%s.zip' % last_month)
+
+        # Execute
+        result = Cli.run('clean')
+
+        # Assert
+        assert result.exit_code == 0
+        assert ('Cleaning up %s...' % project.name) in result.output
+        assert str(yesterday) in result.output
+        assert 'Done' in result.output
+        assert 'Error' not in result.output
+
+        assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % today)
+        assert not os.path.exists('/tmp/rireki_testing/store/%s.zip' % yesterday)
+        assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % last_month)

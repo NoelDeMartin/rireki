@@ -3,16 +3,21 @@ from datetime import datetime
 
 from rireki.utils.time_helpers import now
 from rireki.core.retention_policy import RetentionPolicy
+from rireki.utils.file_helpers import file_get_name
 
 
 class Backup(object):
 
     @classmethod
-    def is_backup_name(cls, name):
-        return re.search('(\\d+)$', name)
+    def is_backup_filename(cls, filename):
+        return re.search('(\\d+)(\\..*)?$', filename)
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, filename):
+        self.filename = filename
+
+    @property
+    def name(self):
+        return file_get_name(self.filename)
 
     @property
     def time(self):

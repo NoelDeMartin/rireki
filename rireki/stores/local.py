@@ -2,7 +2,6 @@ import click
 import os
 
 from rireki.core.store import Store
-from rireki.utils.file_helpers import file_get_name
 from shutil import copyfile, rmtree
 
 
@@ -32,18 +31,23 @@ class Local(Store):
         return config
 
     def remove_backup(self, backup):
-        rmtree(os.path.join(self.path, backup.name))
+        path = os.path.join(self.path, backup.filename)
 
-    def _get_backup_names(self):
+        if os.path.isdir(path):
+            rmtree(path)
+        else:
+            os.remove(path)
+
+    def _get_backup_filenames(self):
         if not os.path.exists(self.path):
             return []
 
-        names = []
+        paths = []
 
-        for file in os.listdir(self.path):
-            names.append(file_get_name(file))
+        for filename in os.listdir(self.path):
+            paths.append(filename)
 
-        return sorted(names, reverse=True)
+        return sorted(paths, reverse=True)
 
     def _upload_file(self, source, destination):
         destination = os.path.join(self.path, destination)
