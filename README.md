@@ -14,7 +14,7 @@ You need to call `rireki backup` in order for backups to be performed, and `rire
 
 ```sh
 0 * * * * rireki backup >> /var/log/cron-rireki.log 2>> /var/log/cron-rireki.log
-0 7 * * * rireki clean >> /var/log/cron-rireki.log 2>> /var/log/cron-rireki.log
+10 7 * * * rireki clean >> /var/log/cron-rireki.log 2>> /var/log/cron-rireki.log
 ```
 
 **Note:** Make sure that the crontab can execute the `rireki` command. That will depend on how you installed the package and which crontab you configure. Also keep in mind that by default the command will read the projects from the home folder of the current user. This can be overriden by setting the `RIREKI_HOME` environment variable. Also make sure that the `/var/log/cron-rireki.log` file exists and is writable by the crontab user.
