@@ -4,6 +4,7 @@ from rireki.core.project import Project
 from rireki.core.projects_manager import ProjectsManager
 from rireki.drivers.index import drivers
 from rireki.stores.index import stores
+from rireki.utils.log_helpers import log
 
 
 @click.command()
@@ -14,7 +15,7 @@ def add(name, driver=None, store=None):
     """Install a new project"""
 
     if ProjectsManager.project_exists(name):
-        click.echo('Project with name "%s" already installed!' % name)
+        log('Project with name "%s" already installed!' % name)
         return
 
     driver = __resolve_driver(driver)
@@ -50,7 +51,7 @@ def __add_new_project(project_name, driver_name, store_name):
 
     ProjectsManager.install_project(project)
 
-    click.echo('Project "%s" has been installed!' % project.name)
+    log('Project "%s" has been installed!' % project.name)
 
 
 def __create_driver(name):

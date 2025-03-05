@@ -2,21 +2,30 @@ import click
 
 from rireki.core.projects_manager import ProjectsManager
 from rireki.utils.array_helpers import array_map
+from rireki.utils.log_helpers import log, enable_timestamps
 from rireki.utils.output import display_table, format_time
 from rireki.utils.time_helpers import now
 
 
 @click.command()
 @click.argument('project', required=False)
-def status(project=None):
+@click.option(
+    '--timestamps',
+    is_flag=True,
+    help='Include timestamps in logs',
+)
+def status(project=None, timestamps=False):
     """Show status of installed projects"""
+
+    if timestamps:
+        enable_timestamps()
 
     if project:
         name = project
         project = ProjectsManager.get_project_by_name(name)
 
         if not project:
-            click.echo('Project with name "%s" is not installed!' % name)
+            log('Project with name "%s" is not installed!' % name)
             return
 
         __display_project_status(project)
@@ -28,9 +37,9 @@ def status(project=None):
 
 def __display_project_status(project):
     if project.has_pending_backups():
-        click.echo(click.style('Project needs to be backed up', fg='red'))
+        log(click.style('Project needs to be backed up', fg='red'))
     else:
-        click.echo(
+        log(
             click.style('Project ', fg='green') +
             click.style(project.name, bold=True, fg='green') +
             click.style(' is up to date', fg='green'),
@@ -40,10 +49,10 @@ def __display_project_status(project):
     stale_backups = project.get_stale_backups(backups)
 
     click.echo('')
-    click.echo('All backups (%s total, %s stale):' % (len(backups), len(stale_backups)))
+    log('All backups (%s total, %s stale):' % (len(backups), len(stale_backups)))
 
     for backup in backups:
-        click.echo(
+        log(
             '- %s ago%s' % (
                 format_time(now() - backup.time, 'interval'),
                 ' (stale)' if backup in stale_backups else '',
@@ -53,7 +62,7 @@ def __display_project_status(project):
 
 def __display_projects_status(projects):
     if not projects:
-        click.echo('No projects installed!')
+        log('No projects installed!')
         return
 
     display_table(

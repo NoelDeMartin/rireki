@@ -1,6 +1,7 @@
 import json
 import os
 
+from datetime import datetime
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch, file_get_contents
@@ -68,3 +69,26 @@ class TestBackup(TestCase):
 
         logs = json.loads(file_get_contents(backup_path))
         assert command_output in logs.get('stdout')
+
+    def test_showing_timestamps(self):
+        # Prepare
+        time = now()
+        command_output = self.faker.sentence()
+        store_path = '/tmp/rireki_testing/store'
+        project = self._create_project(
+            driver='custom',
+            driver_config={'command': 'echo "%s"' % command_output},
+            store='local',
+            store_config={'path': store_path},
+        )
+
+        set_testing_now(time)
+
+        # Execute
+        result = Cli.run('backup', '--timestamps')
+
+        # Assert
+        assert result.exit_code == 0
+        assert ('[%s] Backing up %s...' % (datetime.fromtimestamp(time).isoformat(), project.name)) in result.output
+        assert 'Done' in result.output
+        assert 'Error' not in result.output
