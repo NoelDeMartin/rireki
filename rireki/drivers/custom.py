@@ -1,11 +1,11 @@
 import click
 import json
 import os
+import signal
 import subprocess
 
 from rireki.core.driver import Driver
 from rireki.utils.file_helpers import file_put_contents
-from threading import Thread
 
 
 class Custom(Driver):
@@ -47,36 +47,41 @@ class Custom(Driver):
         return click.prompt('Enter the command you want to execute to perform backups')
 
     def __run_command(self, path):
-        self.process = None
-        self.logs = {}
+        process = subprocess.Popen(
+            self.command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            errors='replace',
+            start_new_session=True,
+            env={**os.environ, 'RIREKI_BACKUP_PATH': path},
+        )
 
-        def target():
-            self.process = subprocess.Popen(
-                self.command,
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                env={'RIREKI_BACKUP_PATH': path}
-            )
+        try:
+            stdout, stderr = process.communicate(timeout=self.timeout)
+        except subprocess.TimeoutExpired as e:
+            self.__kill_process(process)
+            raise Exception('Command timed out after %s seconds' % self.timeout) from e
 
-            self.logs['stdout'] = str(self.process.stdout.read())
-            self.logs['stderr'] = str(self.process.stderr.read())
-
-        thread = Thread(target=target)
-
-        thread.start()
-        thread.join(self.timeout)
-        self.process.poll()
-
-        if thread.is_alive() or self.process.returncode is None:
-            self.process.terminate()
-            thread.join()
-            self.process.poll()
-
-        if self.process.returncode != 0:
+        if process.returncode != 0:
             raise Exception(
                 'Command failed with return code %s\n\nstdout:\n%s\nstderr:\n%s' %
-                (self.process.returncode, self.logs['stdout'], self.logs['stderr'])
+                (process.returncode, stdout, stderr)
             )
 
-        return self.logs
+        return {
+            'stdout': stdout,
+            'stderr': stderr,
+        }
+
+    def __kill_process(self, process):
+        if hasattr(os, 'killpg'):
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except OSError:
+                pass
+        else:
+            process.kill()
+
+        process.communicate()
