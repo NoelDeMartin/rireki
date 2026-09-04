@@ -1,6 +1,6 @@
 import click
-import os
 import shutil
+import tempfile
 
 from rireki.core.configurable import Configurable
 from rireki.utils.string_helpers import str_studly
@@ -56,11 +56,7 @@ class Driver(Configurable):
             self._clean_backup_files(tmp_path)
 
     def _create_temporary_folder(self):
-        path = '/tmp/rireki-{}-{}-{}'.format(self.name, self.project.slug, now())
-
-        os.makedirs(path)
-
-        return path
+        return tempfile.mkdtemp(prefix='rireki-{}-{}-'.format(self.name, self.project.slug))
 
     def _clean_backup_files(self, path):
         shutil.rmtree(path)

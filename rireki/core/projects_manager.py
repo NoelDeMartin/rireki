@@ -11,13 +11,23 @@ class ProjectsManager():
 
     @classmethod
     def get_projects(cls):
+        cls.__ensure_config()
+
         if not os.path.exists(Config.projects_path):
             return []
 
-        return [cls.__parse_project_config(file_name[:-5]) for file_name in os.listdir(Config.projects_path)]
+        projects = []
+        for file_name in os.listdir(Config.projects_path):
+            file_path = os.path.join(Config.projects_path, file_name)
+            if file_name.endswith('.conf') and os.path.isfile(file_path):
+                projects.append(cls.__parse_project_config(file_name[:-5]))
+
+        return projects
 
     @classmethod
     def get_project_by_name(cls, name):
+        cls.__ensure_config()
+
         if not cls.project_exists(name):
             return None
 
@@ -25,19 +35,28 @@ class ProjectsManager():
 
     @classmethod
     def project_exists(cls, name):
-        return os.path.exists('%s/%s.conf' % (Config.projects_path, name))
+        cls.__ensure_config()
+
+        return os.path.isfile(os.path.join(Config.projects_path, '%s.conf' % name))
 
     @classmethod
     def install_project(cls, project):
+        cls.__ensure_config()
+
         if not os.path.exists(Config.projects_path):
             os.makedirs(Config.projects_path)
 
-        with open('%s/%s.conf' % (Config.projects_path, project.name), 'w') as config_file:
+        with open(os.path.join(Config.projects_path, '%s.conf' % project.name), 'w') as config_file:
             config_file.write(toml.dumps(project.get_config()))
 
     @classmethod
+    def __ensure_config(cls):
+        if Config.projects_path is None:
+            Config.load()
+
+    @classmethod
     def __parse_project_config(cls, project_name):
-        config = toml.load('%s/%s.conf' % (Config.projects_path, project_name))
+        config = toml.load(os.path.join(Config.projects_path, '%s.conf' % project_name))
 
         driver = drivers[config['driver']['name']]()
         store = stores[config['store']['name']]()

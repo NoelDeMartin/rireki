@@ -92,3 +92,28 @@ class TestBackup(TestCase):
         assert ('[%s] Backing up %s...' % (datetime.fromtimestamp(time).isoformat(), project.name)) in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
+
+    def test_backup_failure_exits_with_error_code(self):
+        # Prepare
+        self._create_project(
+            driver='custom',
+            driver_config={'command': 'exit 1'},
+            store='local',
+            store_config={'path': '/tmp/rireki_testing/store'},
+        )
+
+        # Execute
+        result = Cli.run('backup')
+
+        # Assert
+        assert result.exit_code == 1
+        assert 'Error:' in result.output
+        assert 'Done' not in result.output
+
+    def test_backup_uninstalled_project_exits_with_error_code(self):
+        # Execute
+        result = Cli.run('backup', 'non_existent_project')
+
+        # Assert
+        assert result.exit_code == 1
+        assert 'Project with name "non_existent_project" is not installed!' in result.output

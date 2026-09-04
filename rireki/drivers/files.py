@@ -1,9 +1,9 @@
 import click
 import os
 import shutil
+import tempfile
 
 from rireki.core.driver import Driver
-from rireki.utils.time_helpers import now
 
 
 class Files(Driver):
@@ -76,20 +76,44 @@ class TemporaryBackupFolder():
         self.driver = driver
 
     def __enter__(self):
-        self.path = os.path.join(
-            '/tmp',
-            'rireki-files-backup-{}-{}'.format(self.driver.project.slug, now())
+        self._check_basename_collisions()
+
+        self.path = tempfile.mkdtemp(
+            prefix='rireki-files-backup-{}-'.format(self.driver.project.slug)
         )
 
-        os.makedirs(self.path)
+        copied = set()
 
         for path in self.driver.paths:
-            if os.path.isdir(path):
-                shutil.copytree(path, os.path.join(self.path, os.path.basename(path)))
+            normalized_path = os.path.normpath(path)
+            if normalized_path in copied:
+                continue
+
+            copied.add(normalized_path)
+            basename = os.path.basename(normalized_path) or 'root'
+            dest_path = os.path.join(self.path, basename)
+
+            if os.path.isdir(normalized_path):
+                shutil.copytree(normalized_path, dest_path)
             else:
-                shutil.copy2(path, os.path.join(self.path, os.path.basename(path)))
+                shutil.copy2(normalized_path, dest_path)
 
         return self
 
     def __exit__(self, type, value, traceback):
         shutil.rmtree(self.path)
+
+    def _check_basename_collisions(self):
+        seen = {}
+
+        for path in self.driver.paths:
+            normalized_path = os.path.normpath(path)
+            basename = os.path.basename(normalized_path) or 'root'
+
+            if basename in seen and seen[basename] != normalized_path:
+                raise Exception(
+                    'Basename collision detected between "{}" and "{}". '
+                    'Paths to back up must have unique basenames.'.format(seen[basename], normalized_path)
+                )
+
+            seen[basename] = normalized_path

@@ -1,4 +1,5 @@
 import click
+import sys
 
 from rireki.core.projects_manager import ProjectsManager
 from rireki.utils.log_helpers import log, enable_timestamps
@@ -23,7 +24,7 @@ def clean(project=None, timestamps=False):
 
         if not project:
             log('Project with name "%s" is not installed!' % name)
-            return
+            sys.exit(1)
 
         projects = [project]
     else:
@@ -33,10 +34,20 @@ def clean(project=None, timestamps=False):
         log('No projects installed!')
         return
 
-    for project in projects:
-        __process_cleanup(project)
+    if not __process_cleanups(projects):
+        sys.exit(1)
 
-    log('Done!')
+
+def __process_cleanups(projects):
+    success = True
+    for project in projects:
+        if not __process_cleanup(project):
+            success = False
+
+    if success:
+        log('Done!')
+
+    return success
 
 
 def __process_cleanup(project):
@@ -44,16 +55,20 @@ def __process_cleanup(project):
 
     if not stale_backups:
         log('Project "%s" does not have any stale backups' % project.name)
-        return
+        return True
 
     log('Cleaning up %s...' % project.name)
 
-    try:
-        for stale_backup in stale_backups:
+    success = True
+    for stale_backup in stale_backups:
+        try:
             log('Removing %s...' % stale_backup.name)
 
             project.remove_backup(stale_backup)
-    except Exception as e:
-        error_message = click.style('Error: %s' % e, fg='red')
+        except Exception as e:
+            error_message = click.style('Error: %s' % e, fg='red')
 
-        click.echo(error_message, err=True)
+            click.echo(error_message, err=True)
+            success = False
+
+    return success

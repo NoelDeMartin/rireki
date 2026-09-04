@@ -1,5 +1,7 @@
 import os
+from unittest.mock import patch
 
+from rireki.core.project import Project
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch
@@ -108,3 +110,33 @@ class TestClean(TestCase):
         assert not os.path.exists('/tmp/rireki_testing/store/%s.zip' % yesterday)
         assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % last_month)
         assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % last_year)
+
+    def test_clean_failure_exits_with_error_code(self):
+        # Prepare
+        self._create_project(
+            store='local',
+            store_config={'path': '/tmp/rireki_testing/store'},
+            retention={'last_backups_retention': 1, 'year_backups_retention': 'monthly'},
+        )
+
+        today = now()
+        yesterday = today - DAY_SECONDS
+        touch('/tmp/rireki_testing/store/%s' % today)
+        touch('/tmp/rireki_testing/store/%s' % yesterday)
+
+        with patch.object(Project, 'remove_backup', side_effect=Exception('Permission denied')):
+            # Execute
+            result = Cli.run('clean')
+
+        # Assert
+        assert result.exit_code == 1
+        assert 'Error: Permission denied' in result.output
+        assert 'Done' not in result.output
+
+    def test_clean_uninstalled_project_exits_with_error_code(self):
+        # Execute
+        result = Cli.run('clean', 'non_existent_project')
+
+        # Assert
+        assert result.exit_code == 1
+        assert 'Project with name "non_existent_project" is not installed!' in result.output

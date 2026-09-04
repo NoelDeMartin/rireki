@@ -1,4 +1,5 @@
 import click
+import sys
 
 from rireki.core.projects_manager import ProjectsManager
 from rireki.utils.log_helpers import log, enable_timestamps
@@ -28,7 +29,7 @@ def backup(project=None, force=False, timestamps=False):
 
         if not project:
             log('Project with name "%s" is not installed!' % name)
-            return
+            sys.exit(1)
 
         projects = [project]
     else:
@@ -38,26 +39,34 @@ def backup(project=None, force=False, timestamps=False):
         log('No projects installed!')
         return
 
-    __process_backups(projects, force)
+    if not __process_backups(projects, force):
+        sys.exit(1)
 
 
 def __process_backups(projects, force):
+    success = True
     for project in projects:
-        __process_backup(project, force)
+        if not __process_backup(project, force):
+            success = False
 
-    log('Done!')
+    if success:
+        log('Done!')
+
+    return success
 
 
 def __process_backup(project, force):
     if not force and not project.has_pending_backups():
         log('Project "%s" does not have any pending backups' % project.name)
-        return
+        return True
 
     log('Backing up %s...' % project.name)
 
     try:
         project.perform_backup()
+        return True
     except Exception as e:
         error_message = click.style('Error: %s' % e, fg='red')
 
         click.echo(error_message, err=True)
+        return False
