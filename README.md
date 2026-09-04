@@ -7,7 +7,7 @@ CLI backup tool. Schedule backups and keep your precious data safe.
 Install the rireki cli running the following command:
 
 ```sh
-pip install rireki
+pipx install rireki
 ```
 
 You need to call `rireki backup` in order for backups to be performed, and `rireki clean` to perform clean up. For example, you could use the following crontab configuration to perform backup checks every hour:
