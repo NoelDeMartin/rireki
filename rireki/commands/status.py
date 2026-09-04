@@ -25,8 +25,7 @@ def status(project=None, timestamps=False):
         project = ProjectsManager.get_project_by_name(name)
 
         if not project:
-            log('Project with name "%s" is not installed!' % name)
-            return
+            raise click.ClickException('Project with name "%s" is not installed!' % name)
 
         __display_project_status(project)
     else:

@@ -1,7 +1,7 @@
 import json
 import os
 
-from mock import Mock
+from unittest.mock import Mock
 from rireki.core.project import Project
 from rireki.drivers.custom import Custom
 from rireki.testing.test_case import TestCase

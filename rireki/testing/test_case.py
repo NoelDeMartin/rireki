@@ -25,8 +25,9 @@ class TestCase(unittest.TestCase):
         if os.path.exists(self.home_path):
             shutil.rmtree(self.home_path)
 
-    def _create_project(self, name=None, retention={}, driver=None, driver_config={}, store=None, store_config={}):
+    def _create_project(self, name=None, retention=None, driver=None, driver_config=None, store=None, store_config=None):
         name = name or self.faker.name()
+        retention = dict(retention) if retention is not None else {}
         driver_config = self.__create_driver_config(driver, driver_config)
         store_config = self.__create_store_config(store, store_config)
 
@@ -64,8 +65,9 @@ class TestCase(unittest.TestCase):
 
         return driver
 
-    def __create_driver_config(self, name=None, config={}):
+    def __create_driver_config(self, name=None, config=None):
         name = name or 'custom'
+        config = dict(config) if config is not None else {}
         config['name'] = name
         config['frequency'] = config.get('frequency') or 42
 
@@ -84,8 +86,9 @@ class TestCase(unittest.TestCase):
 
         return store
 
-    def __create_store_config(self, name=None, config={}):
+    def __create_store_config(self, name=None, config=None):
         name = name or 'local'
+        config = dict(config) if config is not None else {}
         config['name'] = name
 
         if name == 'local':

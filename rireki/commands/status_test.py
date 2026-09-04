@@ -55,3 +55,11 @@ class TestStatus(TestCase):
         assert len(output_lines) == 2
         assert project.name in output_lines[1]
         assert re.search('Backed up \\d seconds ago', output_lines[1])
+
+    def test_status_uninstalled_project_exits_with_error_code(self):
+        # Execute
+        result = Cli.run('status', 'non_existent_project')
+
+        # Assert
+        assert result.exit_code == 1
+        assert 'Project with name "non_existent_project" is not installed!' in result.output

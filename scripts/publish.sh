@@ -6,7 +6,7 @@ set -e
 # build
 rm build -rf
 rm dist -rf
-python3 setup.py sdist bdist_wheel
+python3 -m build
 
 # upload to test repository
 twine upload --repository-url https://test.pypi.org/legacy/ dist/*

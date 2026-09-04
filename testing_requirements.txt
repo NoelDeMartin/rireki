@@ -1,5 +1,1 @@
--r requirements.txt
-Faker==2.0.3
-mock==3.0.5
-flake8
-pytest
+-e .[test]

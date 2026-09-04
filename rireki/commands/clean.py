@@ -1,5 +1,5 @@
 import click
-import sys
+from click.exceptions import Exit
 
 from rireki.core.projects_manager import ProjectsManager
 from rireki.utils.log_helpers import log, enable_timestamps
@@ -23,8 +23,7 @@ def clean(project=None, timestamps=False):
         project = ProjectsManager.get_project_by_name(name)
 
         if not project:
-            log('Project with name "%s" is not installed!' % name)
-            sys.exit(1)
+            raise click.ClickException('Project with name "%s" is not installed!' % name)
 
         projects = [project]
     else:
@@ -35,7 +34,7 @@ def clean(project=None, timestamps=False):
         return
 
     if not __process_cleanups(projects):
-        sys.exit(1)
+        raise Exit(1)
 
 
 def __process_cleanups(projects):

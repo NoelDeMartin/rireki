@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rireki"
+dynamic = ["version"]
+description = "CLI backup tool."
+readme = "README.md"
+license = "MIT"
+authors = [{name = "Noel De Martin", email = "noeldemartin@gmail.com"}]
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.0,<9.0",
+    "toml>=0.10.0,<0.11.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "Faker>=2.0.3",
+    "flake8",
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/noeldemartin/rireki"
+
+[project.scripts]
+rireki = "rireki.cli:cli"
+
+[tool.setuptools.dynamic]
+version = {attr = "rireki.__version__"}
+
+[tool.setuptools.packages.find]
+exclude = ["*test*"]
