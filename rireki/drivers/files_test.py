@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 from rireki.core.project import Project
 from rireki.drivers.files import Files
@@ -214,3 +215,27 @@ class TestFiles(TestCase):
         backup = self.store.get_last_backup()
         assert backup is not None
         assert os.path.exists(os.path.join(store_path, backup.name + '.zip'))
+
+    def test_creates_backups_with_missing_path_cleans_up_temporary_folder(self):
+        # Prepare
+        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        store_path = os.path.join(tmp_path, 'backups')
+        existing_path = os.path.join(tmp_path, 'existing')
+        missing_path = os.path.join(tmp_path, 'missing')
+        tmp_prefix = 'rireki-files-backup-{}-'.format(self.project.slug)
+
+        self.store.load_config({'path': store_path})
+        self.driver.load_config({
+            'frequency': 42,
+            'paths': [existing_path, missing_path],
+        })
+
+        touch(os.path.join(existing_path, str_slug(self.faker.word())))
+
+        # Execute & Assert
+        with self.assertRaises(FileNotFoundError):
+            self.driver.perform_backup()
+
+        leaked_folders = [name for name in os.listdir(tempfile.gettempdir()) if name.startswith(tmp_prefix)]
+        assert leaked_folders == []
+        assert not os.path.exists(store_path)

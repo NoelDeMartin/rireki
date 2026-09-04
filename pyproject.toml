@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=77.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -32,4 +32,4 @@ rireki = "rireki.cli:cli"
 version = {attr = "rireki.__version__"}
 
 [tool.setuptools.packages.find]
-exclude = ["*test*"]
+exclude = ["rireki.testing"]

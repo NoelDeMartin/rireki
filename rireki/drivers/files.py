@@ -82,6 +82,18 @@ class TemporaryBackupFolder():
             prefix='rireki-files-backup-{}-'.format(self.driver.project.slug)
         )
 
+        try:
+            self._copy_paths()
+        except BaseException:
+            self._remove()
+            raise
+
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self._remove()
+
+    def _copy_paths(self):
         copied = set()
 
         for path in self.driver.paths:
@@ -98,10 +110,8 @@ class TemporaryBackupFolder():
             else:
                 shutil.copy2(normalized_path, dest_path)
 
-        return self
-
-    def __exit__(self, type, value, traceback):
-        shutil.rmtree(self.path)
+    def _remove(self):
+        shutil.rmtree(self.path, ignore_errors=True)
 
     def _check_basename_collisions(self):
         seen = {}
