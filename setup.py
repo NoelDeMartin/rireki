@@ -18,7 +18,7 @@ setup(
         'rireki.stores',
         'rireki.utils',
     ],
-    install_requires=['click', 'toml', 'boto3'],
+    install_requires=['click', 'toml'],
     entry_points={
         'console_scripts': ['rireki = rireki.cli:cli'],
     },

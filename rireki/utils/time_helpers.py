@@ -6,8 +6,6 @@ YEAR_SECONDS = 365 * 24 * DAY_SECONDS
 
 
 def now():
-    global testing_now
-
     return testing_now or int(time())
 
 

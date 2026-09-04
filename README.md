@@ -84,27 +84,6 @@ It needs the following configuration:
 | name          | `"local"`     | The name of the store. |
 | path          | `string`      | The path of the folder where the backups will be copied. |
 
-#### Amazon Web Services
-
-This store uploads the backups to an AWS S3 instance.
-
-It needs the following configuration:
-
-| property      | type          | description  |
-| ------------- |---------------| -------------|
-| name          | `"aws"`       | The name of the store. |
-| region        | `string`      | The region where the S3 instance is located. |
-| access_key    | `string`      | The access key ID. |
-| access_secret | `string`      | The secret access key. |
-| bucket        | `string`      | The name of the bucket where the files will be uploaded. |
-| path          | `string`      | The path within the bucket where the files will be placed. |
-
-#### Digital Ocean
-
-This store uploads the backups to a Digital Ocean Spaces instance.
-
-It uses the same configuration as the AWS store, with the only exception that the name is `"digital-ocean"` instead.
-
 ### An example config file
 
 For example, to backup a project named "Foobar" using the `files` driver and the `local` store we would create the following file at `~/.rireki/projects/foobar.conf`:
