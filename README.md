@@ -53,7 +53,7 @@ It needs the following configuration:
 | property      | type          | description  |
 | ------------- |---------------| -------------|
 | name          | `"files"`     | The name of the driver. |
-| frequency     | `integer`     | The frequency in seconds at which new backups should be made. |
+| frequency     | `integer`     | The frequency in minutes at which new backups should be made. |
 | paths         | `string[]`    | Folders or files that will be included in the archive. |
 
 #### Custom
@@ -67,7 +67,7 @@ It needs the following configuration:
 | property      | type          | description  |
 | ------------- |---------------| -------------|
 | name          | `"custom"`    | The name of the driver. |
-| frequency     | `integer`     | The frequency in seconds at which new backups should be made. |
+| frequency     | `integer`     | The frequency in minutes at which new backups should be made. |
 | command       | `string`      | Command to call in order to perform backups. |
 | timeout       | `integer`     | Number of seconds where the command will be timed out and the backup will fail. |
 

@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.1.3](https://github.com/NoelDeMartin/rireki/releases/tag/v0.1.4) - 2025-03-05
+## Unreleased
+
+### Changed
+
+- Modernized dependencies and audited codebase for various bugs and improvements.
+- CLI commands now exit with an error code on failure.
+
+### Removed
+
+- AWS and Digital Ocean stores.
+
+## [v0.1.3](https://github.com/NoelDeMartin/rireki/releases/tag/v0.1.3) - 2025-03-05
 
 ### Added
 
