@@ -2,6 +2,8 @@
 
 CLI backup tool. Schedule backups and keep your precious data safe.
 
+Learn more about my self-hosting set up here: [Programming Patterns: Self-hosting](https://noeldemartin.com/blog/programming-patterns-self-hosting).
+
 ## Installation
 
 Install the rireki cli running the following command:
