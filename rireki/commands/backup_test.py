@@ -1,10 +1,10 @@
 import json
 import os
-
 from datetime import datetime
+
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
-from rireki.utils.file_helpers import touch, file_get_contents
+from rireki.utils.file_helpers import file_get_contents, touch
 from rireki.utils.output import format_time
 from rireki.utils.time_helpers import now, set_testing_now
 
@@ -26,14 +26,14 @@ class TestBackup(TestCase):
             store_config={'path': '/tmp/rireki_testing/store'},
         )
 
-        touch('/tmp/rireki_testing/store/%s/backup' % now())
+        touch(f'/tmp/rireki_testing/store/{now()}/backup')
 
         # Execute
         result = Cli.run('backup')
 
         # Assert
         assert result.exit_code == 0
-        assert ('Project "%s" does not have any pending backups' % project.name) in result.output
+        assert f'Project "{project.name}" does not have any pending backups' in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
@@ -44,7 +44,7 @@ class TestBackup(TestCase):
         store_path = '/tmp/rireki_testing/store'
         project = self._create_project(
             driver='custom',
-            driver_config={'command': 'echo "%s"' % command_output},
+            driver_config={'command': f'echo "{command_output}"'},
             store='local',
             store_config={'path': store_path},
         )
@@ -56,13 +56,13 @@ class TestBackup(TestCase):
 
         # Assert
         assert result.exit_code == 0
-        assert ('Backing up %s...' % project.name) in result.output
+        assert f'Backing up {project.name}...' in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
         backup_path = os.path.join(
             store_path,
-            '{}-backup-{}-{}'.format(project.slug, format_time(time, 'date'), time),
+            f"{project.slug}-backup-{format_time(time, 'date')}-{time}",
             'logs.json',
         )
         assert os.path.exists(backup_path)
@@ -77,7 +77,7 @@ class TestBackup(TestCase):
         store_path = '/tmp/rireki_testing/store'
         project = self._create_project(
             driver='custom',
-            driver_config={'command': 'echo "%s"' % command_output},
+            driver_config={'command': f'echo "{command_output}"'},
             store='local',
             store_config={'path': store_path},
         )
@@ -89,7 +89,7 @@ class TestBackup(TestCase):
 
         # Assert
         assert result.exit_code == 0
-        assert ('[%s] Backing up %s...' % (datetime.fromtimestamp(time).isoformat(), project.name)) in result.output
+        assert f'[{datetime.fromtimestamp(time).isoformat()}] Backing up {project.name}...' in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 

@@ -1,9 +1,10 @@
 import os
 import shutil
-import toml
 import unittest
 
+import toml
 from faker import Faker
+
 from rireki.core.project import Project
 from rireki.drivers.index import drivers
 from rireki.stores.index import stores
@@ -28,13 +29,13 @@ class TestCase(unittest.TestCase):
     def _create_project(self, name=None, retention=None, driver=None, driver_config=None, store=None, store_config=None):
         name = name or self.faker.name()
         retention = dict(retention) if retention is not None else {}
-        driver_config = self.__create_driver_config(driver, driver_config)
-        store_config = self.__create_store_config(store, store_config)
+        driver_config = self._create_driver_config(driver, driver_config)
+        store_config = self._create_store_config(store, store_config)
 
-        if not os.path.exists('%s/projects' % self.home_path):
-            os.makedirs('%s/projects' % self.home_path)
+        if not os.path.exists(f'{self.home_path}/projects'):
+            os.makedirs(f'{self.home_path}/projects')
 
-        with open('%s/projects/%s.conf' % (self.home_path, name), 'w') as config_file:
+        with open(f'{self.home_path}/projects/{name}.conf', 'w') as config_file:
             config = {
                 'name': name,
                 'driver': driver_config,
@@ -54,18 +55,18 @@ class TestCase(unittest.TestCase):
 
         return Project(
             name,
-            self.__create_driver(driver_config),
-            self.__create_store(store_config),
+            self._create_driver(driver_config),
+            self._create_store(store_config),
         )
 
-    def __create_driver(self, config):
+    def _create_driver(self, config):
         driver = drivers[config['name']]()
 
         driver.load_config(config)
 
         return driver
 
-    def __create_driver_config(self, name=None, config=None):
+    def _create_driver_config(self, name=None, config=None):
         name = name or 'custom'
         config = dict(config) if config is not None else {}
         config['name'] = name
@@ -79,14 +80,14 @@ class TestCase(unittest.TestCase):
 
         return config
 
-    def __create_store(self, config):
+    def _create_store(self, config):
         store = stores[config['name']]()
 
         store.load_config(config)
 
         return store
 
-    def __create_store_config(self, name=None, config=None):
+    def _create_store_config(self, name=None, config=None):
         name = name or 'local'
         config = dict(config) if config is not None else {}
         config['name'] = name

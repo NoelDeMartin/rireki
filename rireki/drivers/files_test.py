@@ -1,9 +1,9 @@
 import os
 import tempfile
 
+from rireki.core.errors import BackupError
 from rireki.core.project import Project
 from rireki.drivers.files import Files
-
 from rireki.stores.local import Local
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch
@@ -25,7 +25,7 @@ class TestFiles(TestCase):
 
     def test_creates_backups_with_one_path(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [os.path.join(tmp_path, 'files')]
 
@@ -50,7 +50,7 @@ class TestFiles(TestCase):
 
     def test_creates_backups_with_multiple_paths(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [
             os.path.join(tmp_path, 'files-1'),
@@ -79,7 +79,7 @@ class TestFiles(TestCase):
 
     def test_creates_backups_with_files(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         file_name = str_slug(self.faker.word())
         store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [os.path.join(tmp_path, 'files', file_name)]
@@ -105,7 +105,7 @@ class TestFiles(TestCase):
 
     def test_creates_backups_with_colliding_directory_basenames_raises_error(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         dir1 = os.path.join(tmp_path, 'site1', 'data')
         dir2 = os.path.join(tmp_path, 'site2', 'data')
@@ -120,14 +120,14 @@ class TestFiles(TestCase):
         touch(os.path.join(dir2, 'file2.txt'))
 
         # Execute & Assert
-        with self.assertRaises(Exception) as ctx:
+        with self.assertRaises(BackupError) as ctx:
             self.driver.perform_backup()
 
-        assert 'Basename collision detected between "{}" and "{}"'.format(dir1, dir2) in str(ctx.exception)
+        assert f'Basename collision detected between "{dir1}" and "{dir2}"' in str(ctx.exception)
 
     def test_creates_backups_with_colliding_file_basenames_raises_error(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         file1 = os.path.join(tmp_path, 'site1', 'config.json')
         file2 = os.path.join(tmp_path, 'site2', 'config.json')
@@ -142,14 +142,14 @@ class TestFiles(TestCase):
         touch(file2)
 
         # Execute & Assert
-        with self.assertRaises(Exception) as ctx:
+        with self.assertRaises(BackupError) as ctx:
             self.driver.perform_backup()
 
-        assert 'Basename collision detected between "{}" and "{}"'.format(file1, file2) in str(ctx.exception)
+        assert f'Basename collision detected between "{file1}" and "{file2}"' in str(ctx.exception)
 
     def test_creates_backups_with_colliding_basenames_normalizes_paths_in_error(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         dir1 = os.path.join(tmp_path, 'site1', 'data')
         dir2 = os.path.join(tmp_path, 'site2', 'data')
@@ -164,14 +164,14 @@ class TestFiles(TestCase):
         touch(os.path.join(dir2, 'file2.txt'))
 
         # Execute & Assert
-        with self.assertRaises(Exception) as ctx:
+        with self.assertRaises(BackupError) as ctx:
             self.driver.perform_backup()
 
-        assert 'Basename collision detected between "{}" and "{}"'.format(dir1, dir2) in str(ctx.exception)
+        assert f'Basename collision detected between "{dir1}" and "{dir2}"' in str(ctx.exception)
 
     def test_creates_backups_handles_trailing_slashes(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         driver_paths = [os.path.join(tmp_path, 'files') + '/']
 
@@ -194,7 +194,7 @@ class TestFiles(TestCase):
 
     def test_creates_backups_handles_duplicate_paths(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         dir_path = os.path.join(tmp_path, 'files')
         driver_paths = [dir_path, dir_path + '/']
@@ -218,11 +218,11 @@ class TestFiles(TestCase):
 
     def test_creates_backups_with_missing_path_cleans_up_temporary_folder(self):
         # Prepare
-        tmp_path = os.path.join(self.home_path, '{}-{}'.format(self.project.slug, now()))
+        tmp_path = os.path.join(self.home_path, f'{self.project.slug}-{now()}')
         store_path = os.path.join(tmp_path, 'backups')
         existing_path = os.path.join(tmp_path, 'existing')
         missing_path = os.path.join(tmp_path, 'missing')
-        tmp_prefix = 'rireki-files-backup-{}-'.format(self.project.slug)
+        tmp_prefix = f'rireki-files-backup-{self.project.slug}-'
 
         self.store.load_config({'path': store_path})
         self.driver.load_config({

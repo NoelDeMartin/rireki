@@ -1,5 +1,5 @@
 from rireki.testing.test_case import TestCase
-from rireki.utils.time_helpers import now, set_testing_now, DAY_SECONDS, YEAR_SECONDS
+from rireki.utils.time_helpers import DAY_SECONDS, YEAR_SECONDS, now, set_testing_now
 
 
 class TestTimeHelpers(TestCase):

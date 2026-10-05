@@ -1,4 +1,5 @@
 import os
+
 import toml
 
 from rireki.testing.cli import Cli
@@ -16,8 +17,8 @@ class TestAdd(TestCase):
         result = Cli.run('add', project.name)
 
         # Assert
-        assert result.exit_code == 0
-        assert ('Project with name "%s" already installed!' % project.name) in result.output
+        assert result.exit_code == 1
+        assert f'Project with name "{project.name}" already installed!' in result.output
 
     def test_new_project(self):
         # Prepare
@@ -33,11 +34,11 @@ class TestAdd(TestCase):
 
         # Assert
         assert result.exit_code == 0
-        assert ('Project "%s" has been installed!' % project_name) in result.output
+        assert f'Project "{project_name}" has been installed!' in result.output
 
-        assert os.path.exists('%s/projects/%s.conf' % (self.home_path, project_name))
+        assert os.path.exists(f'{self.home_path}/projects/{project_name}.conf')
 
-        config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
+        config = toml.load(f'{self.home_path}/projects/{project_name}.conf')
 
         assert 'name' in config
         assert config['name'] == project_name
@@ -58,7 +59,7 @@ class TestAdd(TestCase):
             'add', project_name,
             '--driver=' + driver_name,
             '--store=local',
-            input=self.__get_new_project_with_files_driver_input(
+            input=self._get_new_project_with_files_driver_input(
                 driver_frequency_name,
                 driver_paths,
             ),
@@ -67,7 +68,7 @@ class TestAdd(TestCase):
         # Assert
         assert result.exit_code == 0
 
-        config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
+        config = toml.load(f'{self.home_path}/projects/{project_name}.conf')
 
         assert 'driver' in config
         assert config['driver']['name'] == driver_name
@@ -93,7 +94,7 @@ class TestAdd(TestCase):
         # Assert
         assert result.exit_code == 0
 
-        config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
+        config = toml.load(f'{self.home_path}/projects/{project_name}.conf')
 
         assert 'driver' in config
         assert config['driver']['name'] == driver_name
@@ -117,13 +118,13 @@ class TestAdd(TestCase):
         # Assert
         assert result.exit_code == 0
 
-        config = toml.load('%s/projects/%s.conf' % (self.home_path, project_name))
+        config = toml.load(f'{self.home_path}/projects/{project_name}.conf')
 
         assert 'store' in config
         assert config['store']['name'] == store_name
         assert config['store']['path'] == store_path
 
-    def __get_new_project_with_files_driver_input(self, driver_frequency_name, driver_paths):
+    def _get_new_project_with_files_driver_input(self, driver_frequency_name, driver_paths):
         input = []
 
         # Driver frequency

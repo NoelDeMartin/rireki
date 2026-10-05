@@ -1,10 +1,12 @@
-import click
 import json
 import os
 import signal
 import subprocess
 
+import click
+
 from rireki.core.driver import Driver
+from rireki.core.errors import BackupError
 from rireki.utils.file_helpers import file_put_contents
 
 
@@ -20,7 +22,7 @@ class Custom(Driver):
     def ask_config(self):
         Driver.ask_config(self)
 
-        self.command = self.__ask_command()
+        self.command = self._ask_command()
 
     def load_config(self, config):
         Driver.load_config(self, config)
@@ -37,16 +39,16 @@ class Custom(Driver):
         return config
 
     def _prepare_backup_files(self, path):
-        logs = self.__run_command(path)
+        logs = self._run_command(path)
 
         file_put_contents(os.path.join(path, 'logs.json'), json.dumps(logs))
 
         return path
 
-    def __ask_command(self):
+    def _ask_command(self):
         return click.prompt('Enter the command you want to execute to perform backups')
 
-    def __run_command(self, path):
+    def _run_command(self, path):
         process = subprocess.Popen(
             self.command,
             shell=True,
@@ -61,13 +63,12 @@ class Custom(Driver):
         try:
             stdout, stderr = process.communicate(timeout=self.timeout)
         except subprocess.TimeoutExpired as e:
-            self.__kill_process(process)
-            raise Exception('Command timed out after %s seconds' % self.timeout) from e
+            self._kill_process(process)
+            raise BackupError(f'Command timed out after {self.timeout} seconds') from e
 
         if process.returncode != 0:
-            raise Exception(
-                'Command failed with return code %s\n\nstdout:\n%s\nstderr:\n%s' %
-                (process.returncode, stdout, stderr)
+            raise BackupError(
+                f'Command failed with return code {process.returncode}\n\nstdout:\n{stdout}\nstderr:\n{stderr}'
             )
 
         return {
@@ -75,7 +76,7 @@ class Custom(Driver):
             'stderr': stderr,
         }
 
-    def __kill_process(self, process):
+    def _kill_process(self, process):
         if hasattr(os, 'killpg'):
             try:
                 os.killpg(process.pid, signal.SIGKILL)

@@ -1,6 +1,7 @@
+from datetime import datetime
+
 import click
 
-from datetime import datetime
 from rireki.utils.time_helpers import now
 
 timestamps = False
@@ -13,7 +14,7 @@ def enable_timestamps():
 
 def log(message):
     if timestamps:
-        prefix = '[%s] ' % datetime.fromtimestamp(now()).isoformat()
+        prefix = f'[{datetime.fromtimestamp(now()).isoformat()}] '
     else:
         prefix = ''
 

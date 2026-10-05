@@ -24,7 +24,7 @@ class Store(Configurable):
         if os.path.isfile(files_path):
             self._upload_file(
                 files_path,
-                '{}.{}'.format(backup_name, file_get_extension(files_path)),
+                f'{backup_name}.{file_get_extension(files_path)}',
             )
         elif os.path.isdir(files_path):
             for file in os.listdir(files_path):
@@ -34,7 +34,7 @@ class Store(Configurable):
                 )
 
     def remove_backup(self, backup):
-        raise Exception('%s store must implement remove_backup method' % self.name)
+        raise NotImplementedError(f'{self.name} store must implement remove_backup method')
 
     def get_last_backup(self):
         backups = self.get_backups()
@@ -50,7 +50,7 @@ class Store(Configurable):
         return [Backup(filename) for filename in filenames if Backup.is_backup_filename(filename)]
 
     def _get_backup_filenames(self):
-        raise Exception('%s store must implement _get_backup_filenames method' % self.name)
+        raise NotImplementedError(f'{self.name} store must implement _get_backup_filenames method')
 
     def _upload_file(self, source, destination):
-        raise Exception('%s store must implement _upload_file method' % self.name)
+        raise NotImplementedError(f'{self.name} store must implement _upload_file method')

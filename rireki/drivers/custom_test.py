@@ -1,7 +1,8 @@
 import json
 import os
-
 from unittest.mock import Mock
+
+from rireki.core.errors import BackupError
 from rireki.core.project import Project
 from rireki.drivers.custom import Custom
 from rireki.testing.test_case import TestCase
@@ -26,7 +27,7 @@ class TestCustom(TestCase):
         })
 
         # Execute
-        with self.assertRaises(Exception):
+        with self.assertRaises(BackupError):
             self.driver.perform_backup()
 
         # Assert
@@ -41,7 +42,7 @@ class TestCustom(TestCase):
         })
 
         # Execute
-        with self.assertRaises(Exception) as ctx:
+        with self.assertRaises(BackupError) as ctx:
             self.driver.perform_backup()
 
         # Assert
@@ -57,7 +58,7 @@ class TestCustom(TestCase):
         })
 
         # Execute
-        with self.assertRaises(Exception):
+        with self.assertRaises(BackupError):
             self.driver.perform_backup()
 
         # Assert

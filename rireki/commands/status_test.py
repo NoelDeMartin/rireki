@@ -43,7 +43,7 @@ class TestStatus(TestCase):
             store_config={'path': '/tmp/rireki_testing/store'},
         )
 
-        touch('/tmp/rireki_testing/store/%s/backup' % now())
+        touch(f'/tmp/rireki_testing/store/{now()}/backup')
 
         # Execute
         result = Cli.run('status')

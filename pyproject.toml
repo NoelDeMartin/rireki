@@ -18,8 +18,8 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "Faker>=2.0.3",
-    "flake8",
     "pytest",
+    "ruff>=0.16,<0.17",
 ]
 
 [project.urls]
@@ -33,3 +33,14 @@ version = {attr = "rireki.__version__"}
 
 [tool.setuptools.packages.find]
 exclude = ["rireki.testing"]
+
+[tool.ruff]
+line-length = 127
+
+[tool.ruff.lint]
+extend-select = ["E", "W", "C90", "I", "UP", "BLE", "DTZ"]
+# Backup dates and log timestamps are intentionally in local time.
+extend-ignore = ["DTZ006"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10

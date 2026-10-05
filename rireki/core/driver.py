@@ -1,6 +1,7 @@
-import click
 import shutil
 import tempfile
+
+import click
 
 from rireki.core.configurable import Configurable
 from rireki.utils.string_helpers import str_studly
@@ -26,7 +27,7 @@ class Driver(Configurable):
     def ask_config(self):
         Configurable.ask_config(self)
 
-        self.frequency = self.__ask_frequency()
+        self.frequency = self._ask_frequency()
 
     def load_config(self, config):
         Configurable.load_config(self, config)
@@ -56,15 +57,15 @@ class Driver(Configurable):
             self._clean_backup_files(tmp_path)
 
     def _create_temporary_folder(self):
-        return tempfile.mkdtemp(prefix='rireki-{}-{}-'.format(self.name, self.project.slug))
+        return tempfile.mkdtemp(prefix=f'rireki-{self.name}-{self.project.slug}-')
 
     def _clean_backup_files(self, path):
         shutil.rmtree(path)
 
     def _prepare_backup_files(self, path):
-        raise Exception('%s driver must implement _prepare_backup_files method' % self.name)
+        raise NotImplementedError(f'{self.name} driver must implement _prepare_backup_files method')
 
-    def __ask_frequency(self):
+    def _ask_frequency(self):
         frequency = click.prompt(
             'How often should the backups be performed?',
             type=click.Choice(DEFAULT_FREQUENCIES.keys(), case_sensitive=False),
@@ -73,11 +74,11 @@ class Driver(Configurable):
         frequency = DEFAULT_FREQUENCIES[str_studly(frequency)]
 
         if not frequency:
-            frequency = self.__ask_custom_frequency()
+            frequency = self._ask_custom_frequency()
 
         return frequency
 
-    def __ask_custom_frequency(self):
+    def _ask_custom_frequency(self):
         return click.prompt(
             'Enter your custom frequency (in minutes)',
             type=click.IntRange(min=1)

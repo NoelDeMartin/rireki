@@ -1,12 +1,12 @@
 import re
 from datetime import datetime
 
-from rireki.utils.time_helpers import now
 from rireki.core.retention_policy import RetentionPolicy
 from rireki.utils.file_helpers import file_get_name
+from rireki.utils.time_helpers import now
 
 
-class Backup(object):
+class Backup:
 
     @classmethod
     def is_backup_filename(cls, filename):

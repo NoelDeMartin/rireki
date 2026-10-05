@@ -21,7 +21,7 @@ def file_get_contents(path):
     if not os.path.exists(path):
         return None
 
-    with open(path, 'r') as file:
+    with open(path) as file:
         return file.read()
 
 

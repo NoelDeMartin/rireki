@@ -5,7 +5,7 @@ from rireki.core.project import Project
 from rireki.testing.cli import Cli
 from rireki.testing.test_case import TestCase
 from rireki.utils.file_helpers import touch
-from rireki.utils.time_helpers import now, set_testing_now, DAY_SECONDS, YEAR_SECONDS
+from rireki.utils.time_helpers import DAY_SECONDS, YEAR_SECONDS, now, set_testing_now
 
 
 class TestClean(TestCase):
@@ -40,7 +40,7 @@ class TestClean(TestCase):
 
         # Assert
         assert result.exit_code == 0
-        assert ('Project "%s" does not have any stale backups' % project.name) in result.output
+        assert f'Project "{project.name}" does not have any stale backups' in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
@@ -57,25 +57,25 @@ class TestClean(TestCase):
         last_month = today - 30 * DAY_SECONDS
         last_year = today - YEAR_SECONDS
 
-        touch('/tmp/rireki_testing/store/%s' % today)
-        touch('/tmp/rireki_testing/store/%s' % yesterday)
-        touch('/tmp/rireki_testing/store/%s' % last_month)
-        touch('/tmp/rireki_testing/store/%s' % last_year)
+        touch(f'/tmp/rireki_testing/store/{today}')
+        touch(f'/tmp/rireki_testing/store/{yesterday}')
+        touch(f'/tmp/rireki_testing/store/{last_month}')
+        touch(f'/tmp/rireki_testing/store/{last_year}')
 
         # Execute
         result = Cli.run('clean')
 
         # Assert
         assert result.exit_code == 0
-        assert ('Cleaning up %s...' % project.name) in result.output
+        assert f'Cleaning up {project.name}...' in result.output
         assert str(yesterday) in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
-        assert os.path.exists('/tmp/rireki_testing/store/%s' % today)
-        assert not os.path.exists('/tmp/rireki_testing/store/%s' % yesterday)
-        assert os.path.exists('/tmp/rireki_testing/store/%s' % last_month)
-        assert os.path.exists('/tmp/rireki_testing/store/%s' % last_year)
+        assert os.path.exists(f'/tmp/rireki_testing/store/{today}')
+        assert not os.path.exists(f'/tmp/rireki_testing/store/{yesterday}')
+        assert os.path.exists(f'/tmp/rireki_testing/store/{last_month}')
+        assert os.path.exists(f'/tmp/rireki_testing/store/{last_year}')
 
     def test_with_stale_file_backups(self):
         # Prepare
@@ -91,25 +91,25 @@ class TestClean(TestCase):
         last_month = today - 30 * DAY_SECONDS
         last_year = today - YEAR_SECONDS
 
-        touch('/tmp/rireki_testing/store/%s.zip' % today)
-        touch('/tmp/rireki_testing/store/%s.zip' % yesterday)
-        touch('/tmp/rireki_testing/store/%s.zip' % last_month)
-        touch('/tmp/rireki_testing/store/%s.zip' % last_year)
+        touch(f'/tmp/rireki_testing/store/{today}.zip')
+        touch(f'/tmp/rireki_testing/store/{yesterday}.zip')
+        touch(f'/tmp/rireki_testing/store/{last_month}.zip')
+        touch(f'/tmp/rireki_testing/store/{last_year}.zip')
 
         # Execute
         result = Cli.run('clean')
 
         # Assert
         assert result.exit_code == 0
-        assert ('Cleaning up %s...' % project.name) in result.output
+        assert f'Cleaning up {project.name}...' in result.output
         assert str(yesterday) in result.output
         assert 'Done' in result.output
         assert 'Error' not in result.output
 
-        assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % today)
-        assert not os.path.exists('/tmp/rireki_testing/store/%s.zip' % yesterday)
-        assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % last_month)
-        assert os.path.exists('/tmp/rireki_testing/store/%s.zip' % last_year)
+        assert os.path.exists(f'/tmp/rireki_testing/store/{today}.zip')
+        assert not os.path.exists(f'/tmp/rireki_testing/store/{yesterday}.zip')
+        assert os.path.exists(f'/tmp/rireki_testing/store/{last_month}.zip')
+        assert os.path.exists(f'/tmp/rireki_testing/store/{last_year}.zip')
 
     def test_clean_failure_exits_with_error_code(self):
         # Prepare
@@ -121,8 +121,8 @@ class TestClean(TestCase):
 
         today = now()
         yesterday = today - DAY_SECONDS
-        touch('/tmp/rireki_testing/store/%s' % today)
-        touch('/tmp/rireki_testing/store/%s' % yesterday)
+        touch(f'/tmp/rireki_testing/store/{today}')
+        touch(f'/tmp/rireki_testing/store/{yesterday}')
 
         with patch.object(Project, 'remove_backup', side_effect=Exception('Permission denied')):
             # Execute

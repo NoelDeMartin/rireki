@@ -11,4 +11,4 @@ class TestCli(TestCase):
 
         # Assert
         assert result.exit_code == 0
-        assert ('rireki, version %s' % __version__) in result.output
+        assert f'rireki, version {__version__}' in result.output

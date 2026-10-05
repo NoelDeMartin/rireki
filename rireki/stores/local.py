@@ -1,8 +1,9 @@
-import click
 import os
+from shutil import copyfile, rmtree
+
+import click
 
 from rireki.core.store import Store
-from shutil import copyfile, rmtree
 
 
 class Local(Store):
@@ -16,7 +17,7 @@ class Local(Store):
     def ask_config(self):
         Store.ask_config(self)
 
-        self.path = self.__ask_path()
+        self.path = self._ask_path()
 
     def load_config(self, config):
         Store.load_config(self, config)
@@ -42,12 +43,7 @@ class Local(Store):
         if not os.path.exists(self.path):
             return []
 
-        paths = []
-
-        for filename in os.listdir(self.path):
-            paths.append(filename)
-
-        return sorted(paths, reverse=True)
+        return sorted(os.listdir(self.path), reverse=True)
 
     def _upload_file(self, source, destination):
         destination = os.path.join(self.path, destination)
@@ -58,5 +54,5 @@ class Local(Store):
 
         copyfile(source, destination)
 
-    def __ask_path(self):
+    def _ask_path(self):
         return click.prompt('Where do you want to store the backup files?')

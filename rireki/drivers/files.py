@@ -1,9 +1,11 @@
-import click
 import os
 import shutil
 import tempfile
 
+import click
+
 from rireki.core.driver import Driver
+from rireki.core.errors import BackupError
 
 
 class Files(Driver):
@@ -17,7 +19,7 @@ class Files(Driver):
     def ask_config(self):
         Driver.ask_config(self)
 
-        self.paths = self.__ask_paths()
+        self.paths = self._ask_paths()
 
     def load_config(self, config):
         Driver.load_config(self, config)
@@ -32,25 +34,25 @@ class Files(Driver):
         return config
 
     def _prepare_backup_files(self, path):
-        format = self.__get_archive_format()
+        format = self._get_archive_format()
 
         with TemporaryBackupFolder(self) as folder:
             shutil.make_archive(os.path.join(path, 'backup'), format, folder.path)
 
         return os.path.join(path, 'backup.' + format)
 
-    def __ask_paths(self):
+    def _ask_paths(self):
         paths = []
         continue_asking = True
 
         while continue_asking:
-            paths.append(self.__ask_path())
+            paths.append(self._ask_path())
 
             continue_asking = click.confirm('Is there anything else you\'d like to back up?')
 
         return paths
 
-    def __ask_path(self):
+    def _ask_path(self):
         path = None
 
         while not path:
@@ -64,13 +66,13 @@ class Files(Driver):
 
         return path
 
-    def __get_archive_format(self):
+    def _get_archive_format(self):
         supported_formats = [format[0] for format in shutil.get_archive_formats()]
 
         return 'zip' if 'zip' in supported_formats else 'tar'
 
 
-class TemporaryBackupFolder():
+class TemporaryBackupFolder:
 
     def __init__(self, driver):
         self.driver = driver
@@ -79,7 +81,7 @@ class TemporaryBackupFolder():
         self._check_basename_collisions()
 
         self.path = tempfile.mkdtemp(
-            prefix='rireki-files-backup-{}-'.format(self.driver.project.slug)
+            prefix=f'rireki-files-backup-{self.driver.project.slug}-'
         )
 
         try:
@@ -121,9 +123,9 @@ class TemporaryBackupFolder():
             basename = os.path.basename(normalized_path) or 'root'
 
             if basename in seen and seen[basename] != normalized_path:
-                raise Exception(
-                    'Basename collision detected between "{}" and "{}". '
-                    'Paths to back up must have unique basenames.'.format(seen[basename], normalized_path)
+                raise BackupError(
+                    f'Basename collision detected between "{seen[basename]}" and "{normalized_path}". '
+                    'Paths to back up must have unique basenames.'
                 )
 
             seen[basename] = normalized_path

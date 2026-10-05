@@ -15,16 +15,15 @@ def add(name, driver=None, store=None):
     """Install a new project"""
 
     if ProjectsManager.project_exists(name):
-        log('Project with name "%s" already installed!' % name)
-        return
+        raise click.ClickException(f'Project with name "{name}" already installed!')
 
-    driver = __resolve_driver(driver)
-    store = __resolve_store(store)
+    driver = _resolve_driver(driver)
+    store = _resolve_store(store)
 
-    __add_new_project(name, driver, store)
+    _add_new_project(name, driver, store)
 
 
-def __resolve_driver(driver):
+def _resolve_driver(driver):
     if driver:
         return driver
 
@@ -34,7 +33,7 @@ def __resolve_driver(driver):
     )
 
 
-def __resolve_store(store):
+def _resolve_store(store):
     if store:
         return store
 
@@ -44,17 +43,17 @@ def __resolve_store(store):
     )
 
 
-def __add_new_project(project_name, driver_name, store_name):
-    driver = __create_driver(driver_name)
-    store = __create_store(store_name)
-    project = __create_project(project_name, driver, store)
+def _add_new_project(project_name, driver_name, store_name):
+    driver = _create_driver(driver_name)
+    store = _create_store(store_name)
+    project = _create_project(project_name, driver, store)
 
     ProjectsManager.install_project(project)
 
-    log('Project "%s" has been installed!' % project.name)
+    log(f'Project "{project.name}" has been installed!')
 
 
-def __create_driver(name):
+def _create_driver(name):
     driver = drivers[name]()
 
     driver.ask_config()
@@ -62,7 +61,7 @@ def __create_driver(name):
     return driver
 
 
-def __create_store(name):
+def _create_store(name):
     store = stores[name]()
 
     store.ask_config()
@@ -70,5 +69,5 @@ def __create_store(name):
     return store
 
 
-def __create_project(name, driver, store):
+def _create_project(name, driver, store):
     return Project(name, driver, store)

@@ -2,7 +2,7 @@ import click
 from click.exceptions import Exit
 
 from rireki.core.projects_manager import ProjectsManager
-from rireki.utils.log_helpers import log, enable_timestamps
+from rireki.utils.log_helpers import enable_timestamps, log
 
 
 @click.command()
@@ -28,7 +28,7 @@ def backup(project=None, force=False, timestamps=False):
         project = ProjectsManager.get_project_by_name(name)
 
         if not project:
-            raise click.ClickException('Project with name "%s" is not installed!' % name)
+            raise click.ClickException(f'Project with name "{name}" is not installed!')
 
         projects = [project]
     else:
@@ -38,14 +38,14 @@ def backup(project=None, force=False, timestamps=False):
         log('No projects installed!')
         return
 
-    if not __process_backups(projects, force):
+    if not _process_backups(projects, force):
         raise Exit(1)
 
 
-def __process_backups(projects, force):
+def _process_backups(projects, force):
     success = True
     for project in projects:
-        if not __process_backup(project, force):
+        if not _process_backup(project, force):
             success = False
 
     if success:
@@ -54,18 +54,18 @@ def __process_backups(projects, force):
     return success
 
 
-def __process_backup(project, force):
+def _process_backup(project, force):
     if not force and not project.has_pending_backups():
-        log('Project "%s" does not have any pending backups' % project.name)
+        log(f'Project "{project.name}" does not have any pending backups')
         return True
 
-    log('Backing up %s...' % project.name)
+    log(f'Backing up {project.name}...')
 
     try:
         project.perform_backup()
         return True
-    except Exception as e:
-        error_message = click.style('Error: %s' % e, fg='red')
+    except Exception as e:  # noqa: BLE001
+        error_message = click.style(f'Error: {e}', fg='red')
 
         click.echo(error_message, err=True)
         return False

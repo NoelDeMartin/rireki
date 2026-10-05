@@ -2,7 +2,7 @@ import click
 from click.exceptions import Exit
 
 from rireki.core.projects_manager import ProjectsManager
-from rireki.utils.log_helpers import log, enable_timestamps
+from rireki.utils.log_helpers import enable_timestamps, log
 
 
 @click.command()
@@ -23,7 +23,7 @@ def clean(project=None, timestamps=False):
         project = ProjectsManager.get_project_by_name(name)
 
         if not project:
-            raise click.ClickException('Project with name "%s" is not installed!' % name)
+            raise click.ClickException(f'Project with name "{name}" is not installed!')
 
         projects = [project]
     else:
@@ -33,14 +33,14 @@ def clean(project=None, timestamps=False):
         log('No projects installed!')
         return
 
-    if not __process_cleanups(projects):
+    if not _process_cleanups(projects):
         raise Exit(1)
 
 
-def __process_cleanups(projects):
+def _process_cleanups(projects):
     success = True
     for project in projects:
-        if not __process_cleanup(project):
+        if not _process_cleanup(project):
             success = False
 
     if success:
@@ -49,23 +49,23 @@ def __process_cleanups(projects):
     return success
 
 
-def __process_cleanup(project):
+def _process_cleanup(project):
     stale_backups = project.get_stale_backups()
 
     if not stale_backups:
-        log('Project "%s" does not have any stale backups' % project.name)
+        log(f'Project "{project.name}" does not have any stale backups')
         return True
 
-    log('Cleaning up %s...' % project.name)
+    log(f'Cleaning up {project.name}...')
 
     success = True
     for stale_backup in stale_backups:
         try:
-            log('Removing %s...' % stale_backup.name)
+            log(f'Removing {stale_backup.name}...')
 
             project.remove_backup(stale_backup)
-        except Exception as e:
-            error_message = click.style('Error: %s' % e, fg='red')
+        except Exception as e:  # noqa: BLE001
+            error_message = click.style(f'Error: {e}', fg='red')
 
             click.echo(error_message, err=True)
             success = False

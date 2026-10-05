@@ -1,11 +1,13 @@
+from typing import ClassVar
+
 from click.testing import CliRunner
 
 from rireki.cli import cli
 
 
-class Cli():
+class Cli:
     runner = CliRunner()
-    env = {}
+    env: ClassVar[dict[str, str]] = {}
 
     @classmethod
     def reset(cls):

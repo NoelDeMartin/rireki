@@ -1,7 +1,7 @@
 from rireki.core.configurable import Configurable
+from rireki.core.retention_policy import RetentionPolicy
 from rireki.utils.string_helpers import str_slug
 from rireki.utils.time_helpers import YEAR_SECONDS
-from rireki.core.retention_policy import RetentionPolicy
 
 
 class Project(Configurable):

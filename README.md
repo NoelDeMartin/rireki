@@ -107,4 +107,4 @@ As mentioned before, you could call `rireki add foobar` to create this file.
 
 ## Development
 
-Run tests with `pytest` and lint your code with `flake8` (see the [Github Actions configuration](.github/workflows/testing.yml) for more details).
+Run tests with `pytest` and lint your code with `ruff check` (see the [Github Actions configuration](.github/workflows/testing.yml) for more details).
